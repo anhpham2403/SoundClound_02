@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
-
+/**
+ * start config and check ci
+ */
+apply from: '../checkci.gradle'
 android {
   compileSdkVersion 26
   buildToolsVersion "26.0.1"
