@@ -16,8 +16,8 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mViewModel = new HomeViewModel();
+        getSupportActionBar().hide();
+        mViewModel = new HomeViewModel(getSupportFragmentManager(), this);
 
         HomeContract.Presenter presenter = new HomePresenter(mViewModel);
         mViewModel.setPresenter(presenter);
