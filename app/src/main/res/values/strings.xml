@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Sound Cloud</string>
+    <string-array
+        name="tab_name">
+        <item>category</item>
+        <item>offline</item>
+    </string-array>
 </resources>
