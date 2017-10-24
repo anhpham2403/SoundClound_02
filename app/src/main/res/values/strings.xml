@@ -5,4 +5,28 @@
         <item>category</item>
         <item>offline</item>
     </string-array>
+    <string-array name="names">
+        <item>All music</item>
+        <item>All audio</item>
+        <item>Ambient</item>
+        <item>Classical</item>
+        <item>Country</item>
+        <item>Pop</item>
+        <item>Hiphop and rap</item>
+        <item>Dance and edm</item>
+        <item>Altinate rock</item>
+        <item>Deep house</item>
+    </string-array>
+    <string-array name="params">
+        <item>music</item>
+        <item>audio</item>
+        <item>ambient</item>
+        <item>classical</item>
+        <item>country</item>
+        <item>pop</item>
+        <item>hiphoprap</item>
+        <item>danceedm</item>
+        <item>alternativerock</item>
+        <item>deephouse</item>
+    </string-array>
 </resources>

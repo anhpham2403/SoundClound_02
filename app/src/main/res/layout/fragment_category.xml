@@ -11,12 +11,20 @@
             name="viewModel"
             type="com.framgia.soundcloud.screen.home.category.CategoryViewModel"
             />
-
+        <import type="com.framgia.soundcloud.utils.Constant"/>
+        <import type="com.framgia.soundcloud.utils.LayoutManagers"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.framgia.soundcloud.screen.home.category.CategoryActivity"
-        />
+        >
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="@{LayoutManagers.grid(Constant.COLUMN_RECYCLER_VIEW)}"
+            app:recyclerAdapter="@{viewModel.adapter}"
+            />
+    </android.support.constraint.ConstraintLayout>
 </layout>
