@@ -5,6 +5,8 @@ package com.framgia.soundcloud.utils;
  */
 
 public class Constant {
+    public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    public static final String BASE_URL = "http://api.soundcloud.com";
 
     private Constant() {
     }
