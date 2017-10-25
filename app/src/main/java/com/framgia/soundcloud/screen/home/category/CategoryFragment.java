@@ -26,10 +26,9 @@ public class CategoryFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         String[] params = getResources().getStringArray(R.array.params);
         String[] names = getResources().getStringArray(R.array.names);
-        mViewModel = new CategoryViewModel(names, params);
-
-        CategoryContract.Presenter presenter = new CategoryPresenter(mViewModel);
-        mViewModel.setPresenter(presenter);
+        CategoryContract.Presenter presenter = new CategoryPresenter();
+        mViewModel = new CategoryViewModel(presenter, names, params, getContext());
+        presenter.setViewModel(mViewModel);
     }
 
     @Nullable

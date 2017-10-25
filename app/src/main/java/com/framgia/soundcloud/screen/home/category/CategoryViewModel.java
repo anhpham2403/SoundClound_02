@@ -1,8 +1,10 @@
 package com.framgia.soundcloud.screen.home.category;
 
+import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import com.framgia.soundcloud.data.model.Category;
+import com.framgia.soundcloud.screen.listtracks.ListtracksActivity;
 import java.util.List;
 
 /**
@@ -14,12 +16,13 @@ public class CategoryViewModel extends BaseObservable
 
     private CategoryContract.Presenter mPresenter;
     private CategoryAdapter mAdapter;
-    private String[] mParams;
-    private String[] mNames;
+    private Context mContext;
 
-    public CategoryViewModel(String[] names, String[] params) {
-        mNames = names;
-        mParams = params;
+    public CategoryViewModel(CategoryContract.Presenter presenter, String[] names, String[] params,
+            Context context) {
+        mPresenter = presenter;
+        mPresenter.getCategory(names, params);
+        mContext = context;
     }
 
     @Override
@@ -30,12 +33,6 @@ public class CategoryViewModel extends BaseObservable
     @Override
     public void onStop() {
         mPresenter.onStop();
-    }
-
-    @Override
-    public void setPresenter(CategoryContract.Presenter presenter) {
-        mPresenter = presenter;
-        mPresenter.getCategory(mNames, mParams);
     }
 
     @Override
@@ -50,6 +47,6 @@ public class CategoryViewModel extends BaseObservable
 
     @Override
     public void onItemClick(Category category) {
-        //TODO
+        mContext.startActivity(ListtracksActivity.getCategory(mContext, category));
     }
 }

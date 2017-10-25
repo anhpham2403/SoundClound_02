@@ -7,11 +7,7 @@ package com.framgia.soundcloud.screen.home;
 final class HomePresenter implements HomeContract.Presenter {
     private static final String TAG = HomePresenter.class.getName();
 
-    private final HomeContract.ViewModel mViewModel;
-
-    public HomePresenter(HomeContract.ViewModel viewModel) {
-        mViewModel = viewModel;
-    }
+    private HomeContract.ViewModel mViewModel;
 
     @Override
     public void onStart() {
@@ -19,5 +15,10 @@ final class HomePresenter implements HomeContract.Presenter {
 
     @Override
     public void onStop() {
+    }
+
+    @Override
+    public void setViewModel(HomeContract.ViewModel viewModel) {
+        mViewModel = viewModel;
     }
 }
