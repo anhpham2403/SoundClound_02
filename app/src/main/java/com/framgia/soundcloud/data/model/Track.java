@@ -1,12 +1,14 @@
 package com.framgia.soundcloud.data.model;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by anh on 23/10/2017.
  */
 
-public class Track {
+public class Track extends BaseObservable {
     @SerializedName("artwork_url")
     private String mArtworkUrl;
     @SerializedName("created_at")
@@ -28,6 +30,7 @@ public class Track {
     @SerializedName("user")
     private User mUser;
 
+    @Bindable
     public String getArtworkUrl() {
         return mArtworkUrl;
     }
@@ -84,6 +87,7 @@ public class Track {
         mPlaybackCount = playbackCount;
     }
 
+    @Bindable
     public String getTitle() {
         return mTitle;
     }
@@ -92,6 +96,7 @@ public class Track {
         mTitle = title;
     }
 
+    @Bindable
     public User getUser() {
         return mUser;
     }
