@@ -21,6 +21,7 @@ public class CategoryViewModel extends BaseObservable
     public CategoryViewModel(CategoryContract.Presenter presenter, String[] names, String[] params,
             Context context) {
         mPresenter = presenter;
+        mPresenter.setViewModel(this);
         mPresenter.getCategory(names, params);
         mContext = context;
     }

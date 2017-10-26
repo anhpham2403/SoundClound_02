@@ -28,7 +28,6 @@ public class CategoryFragment extends BaseFragment {
         String[] names = getResources().getStringArray(R.array.names);
         CategoryContract.Presenter presenter = new CategoryPresenter();
         mViewModel = new CategoryViewModel(presenter, names, params, getContext());
-        presenter.setViewModel(mViewModel);
     }
 
     @Nullable
