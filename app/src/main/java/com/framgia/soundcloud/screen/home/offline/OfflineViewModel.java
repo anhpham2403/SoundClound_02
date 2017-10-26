@@ -8,7 +8,9 @@ public class OfflineViewModel implements OfflineContract.ViewModel {
 
     private OfflineContract.Presenter mPresenter;
 
-    public OfflineViewModel() {
+    public OfflineViewModel(OfflineContract.Presenter presenter) {
+        mPresenter = presenter;
+        mPresenter.setViewModel(this);
     }
 
     @Override
@@ -19,10 +21,5 @@ public class OfflineViewModel implements OfflineContract.ViewModel {
     @Override
     public void onStop() {
         mPresenter.onStop();
-    }
-
-    @Override
-    public void setPresenter(OfflineContract.Presenter presenter) {
-        mPresenter = presenter;
     }
 }

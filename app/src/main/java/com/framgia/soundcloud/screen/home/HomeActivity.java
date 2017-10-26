@@ -17,11 +17,9 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        mViewModel = new HomeViewModel(getSupportFragmentManager(), this);
-
-        HomeContract.Presenter presenter = new HomePresenter(mViewModel);
-        mViewModel.setPresenter(presenter);
-
+        HomeContract.Presenter presenter = new HomePresenter();
+        mViewModel = new HomeViewModel(presenter, getSupportFragmentManager(), this);
+        presenter.setViewModel(mViewModel);
         ActivityHomeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         binding.setViewModel((HomeViewModel) mViewModel);
     }

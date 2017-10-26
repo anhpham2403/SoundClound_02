@@ -14,7 +14,9 @@ public class HomeViewModel extends BaseObservable implements HomeContract.ViewMo
     private HomeContract.Presenter mPresenter;
     private ViewPagerAdapter mAdapter;
 
-    public HomeViewModel(FragmentManager fragmentManager, Context context) {
+    public HomeViewModel(HomeContract.Presenter presenter, FragmentManager fragmentManager,
+            Context context) {
+        mPresenter = presenter;
         mAdapter = new ViewPagerAdapter(fragmentManager, context);
     }
 
@@ -26,11 +28,6 @@ public class HomeViewModel extends BaseObservable implements HomeContract.ViewMo
     @Override
     public void onStop() {
         mPresenter.onStop();
-    }
-
-    @Override
-    public void setPresenter(HomeContract.Presenter presenter) {
-        mPresenter = presenter;
     }
 
     @Bindable

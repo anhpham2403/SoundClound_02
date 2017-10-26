@@ -7,11 +7,7 @@ package com.framgia.soundcloud.screen.home.offline;
 final class OfflinePresenter implements OfflineContract.Presenter {
     private static final String TAG = OfflinePresenter.class.getName();
 
-    private final OfflineContract.ViewModel mViewModel;
-
-    public OfflinePresenter(OfflineContract.ViewModel viewModel) {
-        mViewModel = viewModel;
-    }
+    private OfflineContract.ViewModel mViewModel;
 
     @Override
     public void onStart() {
@@ -19,5 +15,10 @@ final class OfflinePresenter implements OfflineContract.Presenter {
 
     @Override
     public void onStop() {
+    }
+
+    @Override
+    public void setViewModel(OfflineContract.ViewModel viewModel) {
+        mViewModel = viewModel;
     }
 }

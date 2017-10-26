@@ -24,10 +24,9 @@ public class OfflineFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new OfflineViewModel();
-
-        OfflineContract.Presenter presenter = new OfflinePresenter(mViewModel);
-        mViewModel.setPresenter(presenter);
+        OfflineContract.Presenter presenter = new OfflinePresenter();
+        mViewModel = new OfflineViewModel(presenter);
+        presenter.setViewModel(mViewModel);
     }
 
     @Nullable

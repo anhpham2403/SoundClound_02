@@ -2,13 +2,15 @@ package com.framgia.soundcloud.data.model;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import com.android.databinding.library.baseAdapters.BR;
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.framgia.soundcloud.BR;
 
 /**
  * Created by anh on 24/10/2017.
  */
 
-public class Category extends BaseObservable {
+public class Category extends BaseObservable implements Parcelable {
     private int mImage;
     private String mName;
     private String mParam;
@@ -18,6 +20,24 @@ public class Category extends BaseObservable {
         mName = name;
         mParam = param;
     }
+
+    protected Category(Parcel in) {
+        mImage = in.readInt();
+        mName = in.readString();
+        mParam = in.readString();
+    }
+
+    public static final Creator<Category> CREATOR = new Creator<Category>() {
+        @Override
+        public Category createFromParcel(Parcel in) {
+            return new Category(in);
+        }
+
+        @Override
+        public Category[] newArray(int size) {
+            return new Category[size];
+        }
+    };
 
     @Bindable
     public int getImage() {
@@ -45,5 +65,17 @@ public class Category extends BaseObservable {
     public void setParam(String param) {
         mParam = param;
         notifyPropertyChanged(BR.name);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mImage);
+        dest.writeString(mName);
+        dest.writeString(mParam);
     }
 }

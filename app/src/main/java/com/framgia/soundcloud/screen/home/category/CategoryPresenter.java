@@ -12,11 +12,7 @@ import java.util.List;
 final class CategoryPresenter implements CategoryContract.Presenter {
     private static final String TAG = CategoryPresenter.class.getName();
 
-    private final CategoryContract.ViewModel mViewModel;
-
-    public CategoryPresenter(CategoryContract.ViewModel viewModel) {
-        mViewModel = viewModel;
-    }
+    private CategoryContract.ViewModel mViewModel;
 
     @Override
     public void onStart() {
@@ -24,6 +20,11 @@ final class CategoryPresenter implements CategoryContract.Presenter {
 
     @Override
     public void onStop() {
+    }
+
+    @Override
+    public void setViewModel(CategoryContract.ViewModel viewModel) {
+        mViewModel = viewModel;
     }
 
     @Override

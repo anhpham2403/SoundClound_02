@@ -12,14 +12,14 @@ interface CategoryContract {
     /**
      * View.
      */
-    interface ViewModel extends BaseViewModel<Presenter> {
+    interface ViewModel extends BaseViewModel {
         void showCategory(List<Category> categories);
     }
 
     /**
      * Presenter.
      */
-    interface Presenter extends BasePresenter {
+    interface Presenter extends BasePresenter<ViewModel> {
         void getCategory(String[] categories, String[] params);
     }
 }
