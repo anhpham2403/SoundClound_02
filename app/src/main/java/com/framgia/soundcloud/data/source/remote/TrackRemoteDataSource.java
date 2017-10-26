@@ -7,12 +7,14 @@ import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 
 /**
  * Created by anh on 21/09/2017.
  */
 
 public class TrackRemoteDataSource extends BaseRemoteDataSource {
+    @Inject
     public TrackRemoteDataSource(TrackApi trackApi) {
         super(trackApi);
     }
