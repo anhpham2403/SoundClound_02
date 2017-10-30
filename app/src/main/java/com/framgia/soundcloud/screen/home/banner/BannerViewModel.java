@@ -8,7 +8,9 @@ public class BannerViewModel implements BannerContract.ViewModel {
 
     private BannerContract.Presenter mPresenter;
 
-    public BannerViewModel() {
+    public BannerViewModel(BannerContract.Presenter presenter) {
+        mPresenter = presenter;
+        mPresenter.setViewModel(this);
     }
 
     @Override
@@ -21,8 +23,4 @@ public class BannerViewModel implements BannerContract.ViewModel {
         mPresenter.onStop();
     }
 
-    @Override
-    public void setPresenter(BannerContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
 }
