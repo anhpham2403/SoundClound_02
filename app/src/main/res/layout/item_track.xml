@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <import type="com.framgia.soundcloud.data.model.Track"/>
+        <import type="java.util.List"/>
+        <variable
+            name="viewModel"
+            type="Track"
+            />
+        <variable
+            name="tracks"
+            type="List&lt;Track&gt;"
+            />
+        <variable
+            name="listener"
+            type="com.framgia.soundcloud.screen.listtracks.ListtrackAdapter.OnItemClickListener"
+            />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
+        android:onClick="@{()->listener.onItemClick(tracks,tracks.indexOf(viewModel))}"
+        app:cardCornerRadius="@dimen/dp_5"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_150"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="fitXY"
+                app:imageUrl="@{viewModel.artworkUrl}"
+                ignore="ContentDescription"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingTop="@dimen/dp_5"
+                android:text="@{viewModel.title}"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="normal"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingTop="@dimen/dp_5"
+                android:text="@{viewModel.user.userName}"
+                android:textSize="@dimen/sp_13"
+                android:textStyle="normal"
+                />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</layout>
