@@ -19,8 +19,7 @@ import java.util.List;
 
 public class ListtracksViewModel extends BaseObservable
         implements ListtracksContract.ViewModel, ListtrackAdapter.OnItemClickListener {
-
-    private static List<Track> sTracks;
+    private List<Track> mTracks;
     private ListtracksContract.Presenter mPresenter;
     private ListtrackAdapter mAdapter;
     private Context mContext;
@@ -51,16 +50,8 @@ public class ListtracksViewModel extends BaseObservable
         mPresenter.getTracks();
         mContext = context;
         mIsLoading = true;
-        setsTracks(new ArrayList<Track>());
-        setAdapter(new ListtrackAdapter(sTracks, this));
-    }
-
-    public static List<Track> getsTracks() {
-        return sTracks;
-    }
-
-    public static void setsTracks(List<Track> sTracks) {
-        ListtracksViewModel.sTracks = sTracks;
+        mTracks = new ArrayList<>();
+        setAdapter(new ListtrackAdapter(mTracks, this));
     }
 
     @Override
@@ -76,8 +67,8 @@ public class ListtracksViewModel extends BaseObservable
     @Override
     public void onGetTrackSuccess(TrackResponse tracks) {
         setLoading(false);
-        sTracks.addAll(tracks.getTracks());
-        mAdapter.updateAdapter(sTracks);
+        mTracks.addAll(tracks.getTracks());
+        mAdapter.updateAdapter(tracks.getTracks());
         mUrl = tracks.getNextHref();
     }
 
@@ -105,6 +96,7 @@ public class ListtracksViewModel extends BaseObservable
     @Override
     public void onItemClick(List<Track> tracks, int postion) {
         mContext.startActivity(DetailActivity.getIntentDetailActivity(mContext, postion));
+        DetailActivity.setsTracks(mTracks);
     }
 
     @Bindable
