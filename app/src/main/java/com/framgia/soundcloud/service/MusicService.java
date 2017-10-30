@@ -33,7 +33,7 @@ public class MusicService extends Service
     private int mPostion;
     private int mResumePosition;
     private Random mRandom;
-    private boolean mIsSuffler;
+    private boolean mIsSuffle;
     private int mLoop;
     private int mMediaState = StateMode.STATE_IDLE;
     private IBinder mIBinder = new MusicService.MyBinder();
@@ -62,7 +62,7 @@ public class MusicService extends Service
         mTracks = new ArrayList<>();
         mPostion = 0;
         mRandom = new Random();
-        mIsSuffler = false;
+        mIsSuffle = false;
         mLoop = LoopMode.NONE_LOOP;
         initMusicPlayer();
     }
@@ -168,10 +168,23 @@ public class MusicService extends Service
         if (mPostion >= mTracks.size()) {
             mPostion = 0;
         }
-        if (mIsSuffler) {
+        if (mIsSuffle) {
             mPostion = mRandom.nextInt(mTracks.size() - 1);
         }
         playTrack();
+    }
+
+    public void setSuffle(boolean isSuffle) {
+        mIsSuffle = isSuffle;
+    }
+
+    public void seekTo(int position) {
+        mPlayer.seekTo(position);
+        if (mPlayer.isPlaying()) {
+            return;
+        }
+        mPlayer.start();
+        updateSeekBar();
     }
 
     public void setPostion(int postion) {
@@ -199,6 +212,19 @@ public class MusicService extends Service
         return mPlayer.isPlaying();
     }
 
+    public int getLoop() {
+        return mLoop;
+    }
+
+    public void setLoop(@LoopMode int loop) {
+        mLoop = loop;
+        if (mLoop == LoopMode.NONE_LOOP) {
+            mPlayer.setLooping(false);
+        } else {
+            mPlayer.setLooping(true);
+        }
+    }
+
     /**
      * loop mode
      */
@@ -219,7 +245,7 @@ public class MusicService extends Service
             StateMode.STATE_STOP
     })
     public @interface StateMode {
-    int STATE_IDLE = -1;
+    int STATE_IDLE = 0;
     int STATE_PLAYING = 1;
     int STATE_PAUSE = 2;
     int STATE_STOP = 3;

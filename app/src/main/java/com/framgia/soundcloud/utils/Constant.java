@@ -23,6 +23,8 @@ public class Constant {
     public static final String STREAM_URL =
             "/stream?" + Constant.Param.CLIENT_ID + "=" + BuildConfig.API_KEY;
     public static final int SEEKBAR_DELAY_TIME = 1000;
+    public static final String SIZE_IMAGE = "t500x500";
+    public static final String LARGE = "large";
     public static int[] IMAGE_CATEGORY = {
             R.drawable.ic_all, R.drawable.ic_audio, R.drawable.ic_ambient, R.drawable.ic_classical,
             R.drawable.ic_country, R.drawable.ic_pop, R.drawable.ic_hiphop_rap,

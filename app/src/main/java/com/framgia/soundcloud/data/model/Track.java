@@ -54,6 +54,7 @@ public class Track extends BaseObservable implements Parcelable {
         mUri = in.readString();
         mPlaybackCount = in.readDouble();
         mTitle = in.readString();
+        mUser = in.readParcelable(User.class.getClassLoader());
     }
 
     @Bindable
@@ -63,6 +64,12 @@ public class Track extends BaseObservable implements Parcelable {
 
     public void setArtworkUrl(String artworkUrl) {
         mArtworkUrl = artworkUrl;
+    }
+
+    @Bindable
+    public String getArtworkUrlWithBigSize() {
+        return mArtworkUrl != null ? mArtworkUrl.replace(Constant.LARGE, Constant.SIZE_IMAGE)
+                : null;
     }
 
     public String getCreatedAt() {
@@ -155,6 +162,7 @@ public class Track extends BaseObservable implements Parcelable {
         dest.writeString(mUri);
         dest.writeDouble(mPlaybackCount);
         dest.writeString(mTitle);
+        dest.writeParcelable(mUser, flags);
     }
 
     public String getFullUri() {

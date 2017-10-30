@@ -21,7 +21,9 @@ interface DetailContract {
 
         void onPrevTrack();
 
-        boolean isPlaying();
+        void onSuffleTrackClick();
+
+        void onLoopTrackClick();
 
         void setSeekBar(int progressPercentage);
     }

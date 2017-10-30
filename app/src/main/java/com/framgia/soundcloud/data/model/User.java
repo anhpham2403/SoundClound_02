@@ -1,12 +1,14 @@
 package com.framgia.soundcloud.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by anh on 23/10/2017.
  */
 
-public class User {
+public class User implements Parcelable{
     @SerializedName("full_name")
     private String mFullName;
     @SerializedName("id")
@@ -15,6 +17,25 @@ public class User {
     private String mUserName;
     @SerializedName("avatar_url")
     private String mAvatarUrl;
+
+    protected User(Parcel in) {
+        mFullName = in.readString();
+        mId = in.readInt();
+        mUserName = in.readString();
+        mAvatarUrl = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getFullName() {
         return mFullName;
@@ -46,5 +67,18 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         mAvatarUrl = avatarUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mFullName);
+        dest.writeInt(mId);
+        dest.writeString(mUserName);
+        dest.writeString(mAvatarUrl);
     }
 }
