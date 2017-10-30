@@ -6,6 +6,7 @@ import android.databinding.Bindable;
 import android.widget.Toast;
 import com.framgia.soundcloud.BR;
 import com.framgia.soundcloud.data.model.Track;
+import com.framgia.soundcloud.screen.detail.DetailActivity;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ import java.util.List;
 public class ListtracksViewModel extends BaseObservable
         implements ListtracksContract.ViewModel, ListtrackAdapter.OnItemClickListener {
 
+    private static List<Track> sTracks;
     private ListtracksContract.Presenter mPresenter;
     private ListtrackAdapter mAdapter;
     private Context mContext;
@@ -26,6 +28,14 @@ public class ListtracksViewModel extends BaseObservable
         mPresenter.getTracks();
         mContext = context;
         mIsLoading = true;
+    }
+
+    public static List<Track> getsTracks() {
+        return sTracks;
+    }
+
+    public static void setsTracks(List<Track> sTracks) {
+        ListtracksViewModel.sTracks = sTracks;
     }
 
     @Override
@@ -42,6 +52,7 @@ public class ListtracksViewModel extends BaseObservable
     public void onGetTrackSuccess(List<Track> tracks) {
         setLoading(false);
         setAdapter(new ListtrackAdapter(tracks, this));
+        setsTracks(tracks);
     }
 
     @Override
@@ -67,7 +78,7 @@ public class ListtracksViewModel extends BaseObservable
 
     @Override
     public void onItemClick(List<Track> tracks, int postion) {
-        //TODO
+        mContext.startActivity(DetailActivity.getIntentDetailActivity(mContext, postion));
     }
 
     @Bindable
