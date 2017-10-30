@@ -1,5 +1,6 @@
 package com.framgia.soundcloud.screen.home.offline;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import dagger.Module;
@@ -17,12 +18,13 @@ public class OfflineModule {
     }
 
     @Provides
-    public OfflineContract.ViewModel provideViewModel(OfflineContract.Presenter presenter) {
-        return new OfflineViewModel(presenter);
+    public OfflineContract.ViewModel provideViewModel(Context context,
+            OfflineContract.Presenter presenter) {
+        return new OfflineViewModel(context, presenter);
     }
 
     @Provides
-    public OfflineContract.Presenter providePresenter() {
-        return new OfflinePresenter();
+    public OfflineContract.Presenter providePresenter(Context context) {
+        return new OfflinePresenter(context);
     }
 }
