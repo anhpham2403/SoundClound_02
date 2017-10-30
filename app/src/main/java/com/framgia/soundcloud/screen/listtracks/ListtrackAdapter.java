@@ -40,6 +40,14 @@ public class ListtrackAdapter extends RecyclerView.Adapter<ListtrackAdapter.Bind
         return mTracks != null ? mTracks.size() : 0;
     }
 
+    public void updateAdapter(List<Track> tracks) {
+        if (tracks == null) {
+            return;
+        }
+        mTracks.addAll(tracks);
+        notifyDataSetChanged();
+    }
+
     public interface OnItemClickListener {
         void onItemClick(List<Track> tracks, int postion);
     }

@@ -32,4 +32,10 @@ public class DetailModule {
     public DetailContract.Presenter providePresenter() {
         return new DetailPresenter();
     }
+
+    @Provides
+    public TrackDownloadManager provideDownloadTrack(Context context) {
+        return new TrackDownloadManager(context, mTracks.get(mPostion).getTitle(),
+                mTracks.get(mPostion).getUri());
+    }
 }

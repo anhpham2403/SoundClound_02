@@ -71,4 +71,10 @@ public final class BindingUtils {
     public static void setIcon(ImageView view, int id) {
         view.setImageResource(id);
     }
+
+    @BindingAdapter({ "scrollListenner" })
+    public static void setScrollListenner(RecyclerView recyclerView,
+            RecyclerView.OnScrollListener listener) {
+        recyclerView.addOnScrollListener(listener);
+    }
 }

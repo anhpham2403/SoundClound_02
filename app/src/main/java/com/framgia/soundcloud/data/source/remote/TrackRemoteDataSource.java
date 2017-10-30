@@ -1,11 +1,8 @@
 package com.framgia.soundcloud.data.source.remote;
 
-import com.framgia.soundcloud.data.model.Track;
 import com.framgia.soundcloud.data.model.TrackResponse;
 import com.framgia.soundcloud.data.source.remote.service.TrackApi;
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
-import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
@@ -20,12 +17,12 @@ public class TrackRemoteDataSource extends BaseRemoteDataSource {
     }
 
     @Override
-    public Observable<List<Track>> getTracks(Map<String, String> params) {
-        return mTrackApi.getTracks(params).map(new Function<TrackResponse, List<Track>>() {
-            @Override
-            public List<Track> apply(TrackResponse trackResponse) throws Exception {
-                return trackResponse.getTracks();
-            }
-        });
+    public Observable<TrackResponse> getTracks(Map<String, String> params) {
+        return mTrackApi.getTracks(params);
+    }
+
+    @Override
+    public Observable<TrackResponse> getNextHref(String url) {
+        return mTrackApi.getNextHref(url);
     }
 }
