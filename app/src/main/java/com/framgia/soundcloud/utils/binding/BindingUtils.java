@@ -5,6 +5,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import com.framgia.soundcloud.R;
 import com.framgia.soundcloud.screen.home.ViewPagerAdapter;
 import com.framgia.soundcloud.utils.LayoutManagers;
 import com.squareup.picasso.Picasso;
@@ -48,5 +50,19 @@ public final class BindingUtils {
     public static void setAdapterForRecyclerView(RecyclerView recyclerView,
             RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
+    }
+
+    @BindingAdapter({ "bind:setIcon" })
+    public static void setIconPlayOrPause(ImageView view, boolean check) {
+        if (check) {
+            view.setImageResource(R.drawable.ic_pause);
+        } else {
+            view.setImageResource(R.drawable.ic_play);
+        }
+    }
+
+    @BindingAdapter({ "bind:progressPercentage" })
+    public static void setProgressPercentage(SeekBar seekBar, int progressPercentage) {
+        seekBar.setProgress(progressPercentage);
     }
 }
