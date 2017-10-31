@@ -7,11 +7,7 @@ package com.framgia.soundcloud.screen.home.banner;
 final class BannerPresenter implements BannerContract.Presenter {
     private static final String TAG = BannerPresenter.class.getName();
 
-    private final BannerContract.ViewModel mViewModel;
-
-    public BannerPresenter(BannerContract.ViewModel viewModel) {
-        mViewModel = viewModel;
-    }
+    private BannerContract.ViewModel mViewModel;
 
     @Override
     public void onStart() {
@@ -19,5 +15,10 @@ final class BannerPresenter implements BannerContract.Presenter {
 
     @Override
     public void onStop() {
+    }
+
+    @Override
+    public void setViewModel(BannerContract.ViewModel viewModel) {
+        mViewModel = viewModel;
     }
 }

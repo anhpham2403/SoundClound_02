@@ -24,10 +24,8 @@ public class BannerFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new BannerViewModel();
-
-        BannerContract.Presenter presenter = new BannerPresenter(mViewModel);
-        mViewModel.setPresenter(presenter);
+        BannerContract.Presenter presenter = new BannerPresenter();
+        mViewModel = new BannerViewModel(presenter);
     }
 
     @Nullable

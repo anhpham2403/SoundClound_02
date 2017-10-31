@@ -2,13 +2,27 @@ package com.framgia.soundcloud.data.model;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.framgia.soundcloud.utils.Constant;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by anh on 23/10/2017.
  */
 
-public class Track extends BaseObservable {
+public class Track extends BaseObservable implements Parcelable {
+    public static final Creator<Track> CREATOR = new Creator<Track>() {
+        @Override
+        public Track createFromParcel(Parcel in) {
+            return new Track(in);
+        }
+
+        @Override
+        public Track[] newArray(int size) {
+            return new Track[size];
+        }
+    };
     @SerializedName("artwork_url")
     private String mArtworkUrl;
     @SerializedName("created_at")
@@ -29,6 +43,18 @@ public class Track extends BaseObservable {
     private String mTitle;
     @SerializedName("user")
     private User mUser;
+
+    protected Track(Parcel in) {
+        mArtworkUrl = in.readString();
+        mCreatedAt = in.readString();
+        mDescription = in.readString();
+        mDownloadable = in.readByte() != 0;
+        mDuration = in.readInt();
+        mId = in.readInt();
+        mUri = in.readString();
+        mPlaybackCount = in.readDouble();
+        mTitle = in.readString();
+    }
 
     @Bindable
     public String getArtworkUrl() {
@@ -111,5 +137,27 @@ public class Track extends BaseObservable {
 
     public void setUri(String uri) {
         mUri = uri;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mArtworkUrl);
+        dest.writeString(mCreatedAt);
+        dest.writeString(mDescription);
+        dest.writeByte((byte) (mDownloadable ? 1 : 0));
+        dest.writeInt(mDuration);
+        dest.writeInt(mId);
+        dest.writeString(mUri);
+        dest.writeDouble(mPlaybackCount);
+        dest.writeString(mTitle);
+    }
+
+    public String getFullUri() {
+        return getUri() + Constant.STREAM_URL;
     }
 }

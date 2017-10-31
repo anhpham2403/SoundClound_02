@@ -5,4 +5,5 @@
     <color name="color_accent">#ff7961</color>
     <color name="color_white">#ffffff</color>
     <color name="color_black">#000000</color>
+    <color name="color_cyan_accent_100">#6bfffa</color>
 </resources>
