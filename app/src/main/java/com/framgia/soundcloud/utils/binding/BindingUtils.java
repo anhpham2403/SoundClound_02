@@ -32,7 +32,11 @@ public final class BindingUtils {
 
     @BindingAdapter({ "bind:imageUrl" })
     public static void loadImage(ImageView view, String imageUrl) {
-        Picasso.with(view.getContext()).load(imageUrl).into(view);
+        Picasso.with(view.getContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_default)
+                .error(R.drawable.ic_default)
+                .into(view);
     }
 
     @BindingAdapter({ "bind:imageUrl" })
@@ -52,17 +56,19 @@ public final class BindingUtils {
         recyclerView.setAdapter(adapter);
     }
 
-    @BindingAdapter({ "bind:setIcon" })
-    public static void setIconPlayOrPause(ImageView view, boolean check) {
-        if (check) {
-            view.setImageResource(R.drawable.ic_pause);
-        } else {
-            view.setImageResource(R.drawable.ic_play);
-        }
-    }
-
     @BindingAdapter({ "bind:progressPercentage" })
     public static void setProgressPercentage(SeekBar seekBar, int progressPercentage) {
         seekBar.setProgress(progressPercentage);
+    }
+
+    @BindingAdapter({ "bind:setOnChangeListener" })
+    public static void setOnChangeListener(SeekBar seekBar,
+            SeekBar.OnSeekBarChangeListener listener) {
+        seekBar.setOnSeekBarChangeListener(listener);
+    }
+
+    @BindingAdapter({ "bind:setIcon" })
+    public static void setIcon(ImageView view, int id) {
+        view.setImageResource(id);
     }
 }

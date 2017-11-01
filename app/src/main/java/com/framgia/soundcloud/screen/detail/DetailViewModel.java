@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.IBinder;
+import android.widget.SeekBar;
 import com.framgia.soundcloud.BR;
+import com.framgia.soundcloud.R;
 import com.framgia.soundcloud.data.model.Track;
 import com.framgia.soundcloud.service.MusicService;
 import com.framgia.soundcloud.utils.Constant;
@@ -22,8 +24,10 @@ import java.util.Locale;
  * Exposes the data to be used in the Detail screen.
  */
 
-public class DetailViewModel extends BaseObservable implements DetailContract.ViewModel {
+public class DetailViewModel extends BaseObservable
+        implements DetailContract.ViewModel, SeekBar.OnSeekBarChangeListener {
 
+    private static final int PERCENT = 100;
     private DetailContract.Presenter mPresenter;
     private boolean mIsPlay;
     private int mCurrentPostion;
@@ -34,6 +38,10 @@ public class DetailViewModel extends BaseObservable implements DetailContract.Vi
     private int mPostion;
     private Track mTrack;
     private int mProgressPercentage;
+    private boolean mIsSuffle;
+    private int mIconPlay;
+    private int mIconShuffle;
+    private int mIconLoop;
     private BroadcastReceiver mUpdateInfo = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -70,6 +78,9 @@ public class DetailViewModel extends BaseObservable implements DetailContract.Vi
         mIsPlay = isPlaying();
         mContext = context;
         mTrack = tracks.get(postion);
+        mIconShuffle = R.drawable.ic_shuffle_off;
+        mIconLoop = R.drawable.ic_repeat_off;
+        mIconPlay = R.drawable.ic_pause;
         registerBroadcast();
     }
 
@@ -145,6 +156,31 @@ public class DetailViewModel extends BaseObservable implements DetailContract.Vi
     }
 
     @Override
+    public void onSuffleTrackClick() {
+        setSuffle(!mIsSuffle);
+        setIconShuffle(mIsSuffle ? R.drawable.ic_shuffle_on : R.drawable.ic_shuffle_off);
+    }
+
+    @Override
+    public void onLoopTrackClick() {
+        switch (mMusicService.getLoop()) {
+            case MusicService.LoopMode.NONE_LOOP:
+                setLoop(MusicService.LoopMode.LOOP_LIST_TRACKS);
+                setIconLoop(R.drawable.ic_repeat_on);
+                break;
+            case MusicService.LoopMode.LOOP_LIST_TRACKS:
+                setLoop(MusicService.LoopMode.LOOP_TRACK);
+                setIconLoop(R.drawable.ic_repeat_one);
+                break;
+            case MusicService.LoopMode.LOOP_TRACK:
+                setLoop(MusicService.LoopMode.NONE_LOOP);
+                setIconLoop(R.drawable.ic_repeat_off);
+                break;
+            default:
+                break;
+        }
+    }
+
     public boolean isPlaying() {
         if (mMusicService == null) {
             return false;
@@ -166,8 +202,10 @@ public class DetailViewModel extends BaseObservable implements DetailContract.Vi
     public void onClickPlay() {
         if (mIsPlay) {
             onPauseTrack();
+            setIconPlay(R.drawable.ic_play);
         } else {
             onPlayTrack();
+            setIconPlay(R.drawable.ic_pause);
         }
     }
 
@@ -200,5 +238,81 @@ public class DetailViewModel extends BaseObservable implements DetailContract.Vi
     public void setProgressPercentage(int progressPercentage) {
         mProgressPercentage = progressPercentage;
         notifyPropertyChanged(BR.progressPercentage);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (!fromUser) {
+            return;
+        }
+        int time = progress * mTrack.getDuration() / PERCENT;
+        mMusicService.seekTo(time);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Bindable
+    public boolean isSuffle() {
+        return mIsSuffle;
+    }
+
+    public void setSuffle(boolean suffle) {
+        mMusicService.setSuffle(suffle);
+        mIsSuffle = suffle;
+        notifyPropertyChanged(BR.suffle);
+    }
+
+    @Bindable
+    public int getLoop() {
+        if (mMusicService == null) {
+            return MusicService.LoopMode.NONE_LOOP;
+        }
+        return mMusicService.getLoop();
+    }
+
+    public void setLoop(int loop) {
+        if (mMusicService == null) {
+            return;
+        }
+        mMusicService.setLoop(loop);
+        notifyPropertyChanged(BR.loop);
+    }
+
+    @Bindable
+    public int getIconPlay() {
+        return mIconPlay;
+    }
+
+    public void setIconPlay(int iconPlay) {
+        mIconPlay = iconPlay;
+        notifyPropertyChanged(BR.iconPlay);
+    }
+
+    @Bindable
+    public int getIconShuffle() {
+        return mIconShuffle;
+    }
+
+    public void setIconShuffle(int iconShuffle) {
+        mIconShuffle = iconShuffle;
+        notifyPropertyChanged(BR.iconShuffle);
+    }
+
+    @Bindable
+    public int getIconLoop() {
+        return mIconLoop;
+    }
+
+    public void setIconLoop(int iconLoop) {
+        mIconLoop = iconLoop;
+        notifyPropertyChanged(BR.iconLoop);
     }
 }
