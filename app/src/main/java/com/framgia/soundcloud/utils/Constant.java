@@ -20,6 +20,7 @@ public class Constant {
     public static final String BROADCAST_CURRENT_POSTION = "currentpostion";
     public static final String ACTION_UPDATE_SEEK_BAR =
             "com.soundcloud_02" + ".ACTION_UPDATE_SEEK_BAR";
+    public static final String BUFFERING_LEVEL = "bufferinglevel";
     public static final String STREAM_URL =
             "/stream?" + Constant.Param.CLIENT_ID + "=" + BuildConfig.API_KEY;
     public static final int SEEKBAR_DELAY_TIME = 1000;

@@ -8,23 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by anh on 23/10/2017.
  */
 
-public class User implements Parcelable{
-    @SerializedName("full_name")
-    private String mFullName;
-    @SerializedName("id")
-    private int mId;
-    @SerializedName("username")
-    private String mUserName;
-    @SerializedName("avatar_url")
-    private String mAvatarUrl;
-
-    protected User(Parcel in) {
-        mFullName = in.readString();
-        mId = in.readInt();
-        mUserName = in.readString();
-        mAvatarUrl = in.readString();
-    }
-
+public class User implements Parcelable {
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel in) {
@@ -36,6 +20,25 @@ public class User implements Parcelable{
             return new User[size];
         }
     };
+    @SerializedName("full_name")
+    private String mFullName;
+    @SerializedName("id")
+    private int mId;
+    @SerializedName("username")
+    private String mUserName;
+    @SerializedName("avatar_url")
+    private String mAvatarUrl;
+
+    public User(String userName) {
+        mUserName = userName;
+    }
+
+    protected User(Parcel in) {
+        mFullName = in.readString();
+        mId = in.readInt();
+        mUserName = in.readString();
+        mAvatarUrl = in.readString();
+    }
 
     public String getFullName() {
         return mFullName;
