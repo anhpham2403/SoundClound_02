@@ -3,10 +3,14 @@ package com.framgia.soundcloud.screen.listtracks;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 import com.framgia.soundcloud.BR;
 import com.framgia.soundcloud.data.model.Track;
+import com.framgia.soundcloud.data.model.TrackResponse;
 import com.framgia.soundcloud.screen.detail.DetailActivity;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +25,25 @@ public class ListtracksViewModel extends BaseObservable
     private ListtrackAdapter mAdapter;
     private Context mContext;
     private boolean mIsLoading;
+    private String mUrl;
+    private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (dy <= 0) {
+                return;
+            }
+            LinearLayoutManager layoutManager =
+                    (LinearLayoutManager) recyclerView.getLayoutManager();
+            int visibleItemCount = layoutManager.getChildCount();
+            int totalItemCount = layoutManager.getItemCount();
+            int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+            if (!isLoading() && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                setLoading(true);
+                mPresenter.loadMoreTracks(mUrl);
+            }
+        }
+    };
 
     public ListtracksViewModel(Context context, ListtracksContract.Presenter presenter) {
         mPresenter = presenter;
@@ -28,6 +51,8 @@ public class ListtracksViewModel extends BaseObservable
         mPresenter.getTracks();
         mContext = context;
         mIsLoading = true;
+        setsTracks(new ArrayList<Track>());
+        setAdapter(new ListtrackAdapter(sTracks, this));
     }
 
     public static List<Track> getsTracks() {
@@ -49,10 +74,11 @@ public class ListtracksViewModel extends BaseObservable
     }
 
     @Override
-    public void onGetTrackSuccess(List<Track> tracks) {
+    public void onGetTrackSuccess(TrackResponse tracks) {
         setLoading(false);
-        setAdapter(new ListtrackAdapter(tracks, this));
-        setsTracks(tracks);
+        setsTracks(tracks.getTracks());
+        mAdapter.updateAdapter(sTracks);
+        mUrl = tracks.getNextHref();
     }
 
     @Override
@@ -89,5 +115,10 @@ public class ListtracksViewModel extends BaseObservable
     public void setLoading(boolean loading) {
         mIsLoading = loading;
         notifyPropertyChanged(BR.loading);
+    }
+
+    @Bindable
+    public RecyclerView.OnScrollListener getScrollListener() {
+        return mScrollListener;
     }
 }

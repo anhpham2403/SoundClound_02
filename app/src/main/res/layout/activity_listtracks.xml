@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             app:layoutManager="@{LayoutManagers.grid(Constant.COLUMN_RECYCLER_VIEW)}"
             app:recyclerAdapter="@{viewModel.adapter}"
+            app:scrollListenner="@{viewModel.scrollListener}"
             />
         <ProgressBar
             android:layout_width="wrap_content"

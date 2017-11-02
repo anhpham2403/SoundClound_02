@@ -2,7 +2,7 @@ package com.framgia.soundcloud.screen.listtracks;
 
 import com.framgia.soundcloud.BuildConfig;
 import com.framgia.soundcloud.data.model.Category;
-import com.framgia.soundcloud.data.model.Track;
+import com.framgia.soundcloud.data.model.TrackResponse;
 import com.framgia.soundcloud.data.source.TrackRepository;
 import com.framgia.soundcloud.utils.Constant;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -10,7 +10,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,9 +53,9 @@ final class ListtracksPresenter implements ListtracksContract.Presenter {
         mDisposable.add(mRepository.getTracks(params)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribeWith(new DisposableObserver<List<Track>>() {
+                .subscribeWith(new DisposableObserver<TrackResponse>() {
                     @Override
-                    public void onNext(List<Track> value) {
+                    public void onNext(TrackResponse value) {
                         mViewModel.onGetTrackSuccess(value);
                     }
 
@@ -75,5 +74,28 @@ final class ListtracksPresenter implements ListtracksContract.Presenter {
     @Override
     public void onDestroy() {
         mDisposable.dispose();
+    }
+
+    @Override
+    public void loadMoreTracks(String nextHref) {
+        mDisposable.add(mRepository.getNextHref(nextHref)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<TrackResponse>() {
+                    @Override
+                    public void onNext(TrackResponse value) {
+                        mViewModel.onGetTrackSuccess(value);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mViewModel.onGetTrackFailure(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                }));
     }
 }

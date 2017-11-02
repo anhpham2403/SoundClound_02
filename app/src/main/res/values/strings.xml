@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Sound Cloud</string>
+    <string name="download">download</string>
+    <string name="downloading">downloading</string>
     <string-array
         name="tab_name">
         <item>category</item>

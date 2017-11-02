@@ -1,9 +1,8 @@
 package com.framgia.soundcloud.screen.listtracks;
 
-import com.framgia.soundcloud.data.model.Track;
+import com.framgia.soundcloud.data.model.TrackResponse;
 import com.framgia.soundcloud.screen.BasePresenter;
 import com.framgia.soundcloud.screen.BaseViewModel;
-import java.util.List;
 
 /**
  * This specifies the contract between the view and the presenter.
@@ -13,7 +12,7 @@ interface ListtracksContract {
      * View.
      */
     interface ViewModel extends BaseViewModel {
-        void onGetTrackSuccess(List<Track> tracks);
+        void onGetTrackSuccess(TrackResponse tracks);
 
         void onGetTrackFailure(String msg);
 
@@ -27,5 +26,7 @@ interface ListtracksContract {
         void getTracks();
 
         void onDestroy();
+
+        void loadMoreTracks(String nextHref);
     }
 }

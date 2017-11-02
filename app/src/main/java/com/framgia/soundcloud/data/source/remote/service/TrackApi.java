@@ -5,6 +5,7 @@ import io.reactivex.Observable;
 import java.util.Map;
 import retrofit2.http.GET;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 /**
  * Created by anh on 23/10/2017.
@@ -13,4 +14,7 @@ import retrofit2.http.QueryMap;
 public interface TrackApi {
     @GET("/tracks")
     Observable<TrackResponse> getTracks(@QueryMap Map<String, String> params);
+
+    @GET
+    Observable<TrackResponse> getNextHref(@Url String url);
 }
