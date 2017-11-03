@@ -27,7 +27,7 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class MusicService extends Service
         implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener {
     private MediaPlayer mPlayer;
     private List<Track> mTracks;
     private int mPostion;
@@ -38,6 +38,7 @@ public class MusicService extends Service
     private int mMediaState = StateMode.STATE_IDLE;
     private IBinder mIBinder = new MusicService.MyBinder();
     private Handler mSeekBarHandler = new Handler();
+    private int mBufferingLevel;
     private Runnable mUpdateTime = new Runnable() {
         public void run() {
             if (mPlayer.isPlaying()) {
@@ -45,6 +46,7 @@ public class MusicService extends Service
                 broadcastIntent.setAction(Constant.ACTION_UPDATE_SEEK_BAR);
                 broadcastIntent.putExtra(Constant.BROADCAST_CURRENT_POSTION,
                         mPlayer.getCurrentPosition());
+                broadcastIntent.putExtra(Constant.BUFFERING_LEVEL, mBufferingLevel);
                 getApplicationContext().sendBroadcast(broadcastIntent);
             }
             mSeekBarHandler.postDelayed(this, Constant.SEEKBAR_DELAY_TIME);
@@ -64,6 +66,7 @@ public class MusicService extends Service
         mRandom = new Random();
         mIsSuffle = false;
         mLoop = LoopMode.NONE_LOOP;
+        mBufferingLevel = 0;
         initMusicPlayer();
     }
 
@@ -73,6 +76,7 @@ public class MusicService extends Service
         mPlayer.setOnPreparedListener(this);
         mPlayer.setOnCompletionListener(this);
         mPlayer.setOnErrorListener(this);
+        mPlayer.setOnBufferingUpdateListener(this);
     }
 
     @Nullable
@@ -90,10 +94,10 @@ public class MusicService extends Service
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if (mp.isLooping()) {
+        if (mp.isLooping() && mMediaState == LoopMode.LOOP_TRACK) {
             return;
         }
-        if (mp.getCurrentPosition() > 0) {
+        if (mp.isLooping()) {
             mp.reset();
             playNext();
         }
@@ -117,7 +121,7 @@ public class MusicService extends Service
     public void playTrack() {
         mPlayer.reset();
         try {
-            mPlayer.setDataSource(mTracks.get(mPostion).getFullUri());
+            mPlayer.setDataSource(mTracks.get(mPostion).getUri());
         } catch (IOException e) {
             Log.getStackTraceString(e);
         }
@@ -223,6 +227,11 @@ public class MusicService extends Service
         } else {
             mPlayer.setLooping(true);
         }
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        mBufferingLevel = percent;
     }
 
     /**

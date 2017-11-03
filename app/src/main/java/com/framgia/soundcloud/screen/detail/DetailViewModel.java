@@ -38,6 +38,7 @@ public class DetailViewModel extends BaseObservable
     private int mPostion;
     private Track mTrack;
     private int mProgressPercentage;
+    private int mSecondProgressPercentage;
     private boolean mIsSuffle;
     private int mIconPlay;
     private int mIconShuffle;
@@ -193,10 +194,17 @@ public class DetailViewModel extends BaseObservable
         setProgressPercentage(progressPercentage);
     }
 
+    @Override
+    public void setSecondProgressSeekBar(int bufferingLevel) {
+        setSecondProgressPercentage(bufferingLevel);
+    }
+
     public void loadSeekBar(Intent intent) {
         int time = intent.getIntExtra(Constant.BROADCAST_CURRENT_POSTION, 0);
+        int bufferingLevel = intent.getIntExtra(Constant.BUFFERING_LEVEL, 0);
         setCurrentPosition(time);
         mPresenter.updateSeekBar(time, mTrack.getDuration());
+        setSecondProgressPercentage(bufferingLevel);
     }
 
     public void onClickPlay() {
@@ -314,5 +322,15 @@ public class DetailViewModel extends BaseObservable
     public void setIconLoop(int iconLoop) {
         mIconLoop = iconLoop;
         notifyPropertyChanged(BR.iconLoop);
+    }
+
+    @Bindable
+    public int getSecondProgressPercentage() {
+        return mSecondProgressPercentage;
+    }
+
+    public void setSecondProgressPercentage(int secondProgressPercentage) {
+        mSecondProgressPercentage = secondProgressPercentage;
+        notifyPropertyChanged(BR.secondProgressPercentage);
     }
 }

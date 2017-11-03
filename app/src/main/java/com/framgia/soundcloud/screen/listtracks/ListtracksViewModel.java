@@ -76,7 +76,7 @@ public class ListtracksViewModel extends BaseObservable
     @Override
     public void onGetTrackSuccess(TrackResponse tracks) {
         setLoading(false);
-        setsTracks(tracks.getTracks());
+        sTracks.addAll(tracks.getTracks());
         mAdapter.updateAdapter(sTracks);
         mUrl = tracks.getNextHref();
     }

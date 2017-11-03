@@ -56,9 +56,11 @@ public final class BindingUtils {
         recyclerView.setAdapter(adapter);
     }
 
-    @BindingAdapter({ "bind:progressPercentage" })
-    public static void setProgressPercentage(SeekBar seekBar, int progressPercentage) {
+    @BindingAdapter({ "bind:progressPercentage", "bind:secondProgressPercentage" })
+    public static void setProgressPercentage(SeekBar seekBar, int progressPercentage,
+            int secondProgressPercentage) {
         seekBar.setProgress(progressPercentage);
+        seekBar.setSecondaryProgress(secondProgressPercentage);
     }
 
     @BindingAdapter({ "bind:setOnChangeListener" })

@@ -43,6 +43,11 @@ public class Track extends BaseObservable implements Parcelable {
     private String mTitle;
     @SerializedName("user")
     private User mUser;
+    @SerializedName("download_url")
+    private String mDownloadUrl;
+
+    public Track() {
+    }
 
     protected Track(Parcel in) {
         mArtworkUrl = in.readString();
@@ -54,7 +59,16 @@ public class Track extends BaseObservable implements Parcelable {
         mUri = in.readString();
         mPlaybackCount = in.readDouble();
         mTitle = in.readString();
+        mDownloadUrl = in.readString();
         mUser = in.readParcelable(User.class.getClassLoader());
+    }
+
+    public String getDownloadUrl() {
+        return mDownloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        mDownloadUrl = downloadUrl;
     }
 
     @Bindable
@@ -162,6 +176,7 @@ public class Track extends BaseObservable implements Parcelable {
         dest.writeString(mUri);
         dest.writeDouble(mPlaybackCount);
         dest.writeString(mTitle);
+        dest.writeString(mDownloadUrl);
         dest.writeParcelable(mUser, flags);
     }
 

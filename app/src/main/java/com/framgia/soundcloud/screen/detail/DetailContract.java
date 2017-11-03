@@ -26,6 +26,8 @@ interface DetailContract {
         void onLoopTrackClick();
 
         void setSeekBar(int progressPercentage);
+
+        void setSecondProgressSeekBar(int bufferingLevel);
     }
 
     /**

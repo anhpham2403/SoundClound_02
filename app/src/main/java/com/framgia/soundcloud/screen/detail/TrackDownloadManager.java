@@ -74,7 +74,9 @@ public class TrackDownloadManager {
                 reasonText = "ERROR_DEVICE_NOT_FOUND";
                 break;
             default:
-                reasonText = CAN_NOT_DOWNLOAD;
+                if (mUrl == null) {
+                    reasonText = CAN_NOT_DOWNLOAD;
+                }
                 break;
         }
         Toast.makeText(mContext, reasonText, Toast.LENGTH_LONG).show();
