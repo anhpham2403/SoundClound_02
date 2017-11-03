@@ -46,6 +46,7 @@ public class MusicService extends Service
                 broadcastIntent.setAction(Constant.ACTION_UPDATE_SEEK_BAR);
                 broadcastIntent.putExtra(Constant.BROADCAST_CURRENT_POSTION,
                         mPlayer.getCurrentPosition());
+                broadcastIntent.putExtra(Constant.BROADCAST_IS_PLAYING, mPlayer.isPlaying());
                 broadcastIntent.putExtra(Constant.BUFFERING_LEVEL, mBufferingLevel);
                 getApplicationContext().sendBroadcast(broadcastIntent);
             }
@@ -240,9 +241,9 @@ public class MusicService extends Service
     @Retention(SOURCE)
     @IntDef({ LoopMode.NONE_LOOP, LoopMode.LOOP_LIST_TRACKS, LoopMode.LOOP_TRACK })
     public @interface LoopMode {
-    int NONE_LOOP = 0;
-    int LOOP_LIST_TRACKS = 1;
-    int LOOP_TRACK = 2;
+        int NONE_LOOP = 0;
+        int LOOP_LIST_TRACKS = 1;
+        int LOOP_TRACK = 2;
     }
 
     /**
@@ -254,10 +255,10 @@ public class MusicService extends Service
             StateMode.STATE_STOP
     })
     public @interface StateMode {
-    int STATE_IDLE = 0;
-    int STATE_PLAYING = 1;
-    int STATE_PAUSE = 2;
-    int STATE_STOP = 3;
+        int STATE_IDLE = 0;
+        int STATE_PLAYING = 1;
+        int STATE_PAUSE = 2;
+        int STATE_STOP = 3;
     }
 
     /**

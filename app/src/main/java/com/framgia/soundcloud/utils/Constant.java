@@ -26,6 +26,7 @@ public class Constant {
     public static final int SEEKBAR_DELAY_TIME = 1000;
     public static final String SIZE_IMAGE = "t500x500";
     public static final String LARGE = "large";
+    public static final String BROADCAST_IS_PLAYING = "isplaying";
     public static int[] IMAGE_CATEGORY = {
             R.drawable.ic_all, R.drawable.ic_audio, R.drawable.ic_ambient, R.drawable.ic_classical,
             R.drawable.ic_country, R.drawable.ic_pop, R.drawable.ic_hiphop_rap,
