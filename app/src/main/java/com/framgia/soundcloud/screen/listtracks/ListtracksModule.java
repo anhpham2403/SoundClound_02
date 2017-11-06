@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.framgia.soundcloud.data.model.Category;
 import com.framgia.soundcloud.data.source.TrackRepository;
+import com.framgia.soundcloud.data.source.local.TrackLocalDataSource;
 import com.framgia.soundcloud.data.source.remote.TrackRemoteDataSource;
 import dagger.Module;
 import dagger.Provides;
@@ -34,7 +35,8 @@ public class ListtracksModule {
     }
 
     @Provides
-    public TrackRepository provideTrackRepository(TrackRemoteDataSource dataSource) {
-        return new TrackRepository(dataSource);
+    public TrackRepository provideTrackRepository(TrackRemoteDataSource remoteDataSource,
+            TrackLocalDataSource localDataSource) {
+        return new TrackRepository(remoteDataSource, localDataSource);
     }
 }

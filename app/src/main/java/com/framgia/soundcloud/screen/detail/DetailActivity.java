@@ -16,7 +16,6 @@ import com.framgia.soundcloud.R;
 import com.framgia.soundcloud.data.model.Track;
 import com.framgia.soundcloud.databinding.ActivityDetailBinding;
 import com.framgia.soundcloud.screen.BaseActivity;
-import com.framgia.soundcloud.screen.listtracks.ListtracksViewModel;
 import com.framgia.soundcloud.utils.Constant;
 import java.util.List;
 import javax.inject.Inject;
@@ -26,6 +25,7 @@ import javax.inject.Inject;
  */
 public class DetailActivity extends BaseActivity {
     public static final int REQUEST_CODE = 100;
+    private static List<Track> sTracks;
     @Inject
     DetailContract.ViewModel mViewModel;
     @Inject
@@ -38,18 +38,25 @@ public class DetailActivity extends BaseActivity {
         return intent;
     }
 
+    public static List<Track> getsTracks() {
+        return sTracks;
+    }
+
+    public static void setsTracks(List<Track> sTracks) {
+        DetailActivity.sTracks = sTracks;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        List<Track> tracks = ListtracksViewModel.getsTracks();
         int postion = getIntent().getIntExtra(Constant.POSTION_BUNDLE, Constant.DEFAULT_VALUE_INT);
         DaggerDetailComponent.builder()
                 .appComponent(((App) getApplication()).getComponent())
-                .detailModule(new DetailModule(this, tracks, postion))
+                .detailModule(new DetailModule(this, sTracks, postion))
                 .build()
                 .inject(this);
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle(tracks.get(postion).getTitle());
+        setTitle(sTracks.get(postion).getTitle());
         ActivityDetailBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_detail);
         binding.setViewModel((DetailViewModel) mViewModel);

@@ -11,12 +11,13 @@
             name="viewModel"
             type="com.framgia.soundcloud.screen.home.offline.OfflineViewModel"
             />
-
+        <import type="com.framgia.soundcloud.utils.LayoutManagers"/>
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.framgia.soundcloud.screen.home.offline.OfflineActivity"
+        android:layout_height="wrap_content"
+        app:layoutManager="@{LayoutManagers.linear()}"
+        app:recyclerAdapter="@{viewModel.adapter}"
         />
 </layout>
