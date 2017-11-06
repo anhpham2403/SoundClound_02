@@ -2,6 +2,7 @@ package com.framgia.soundcloud;
 
 import android.content.Context;
 import com.framgia.soundcloud.data.source.local.provider.ContentResolverTrack;
+import com.framgia.soundcloud.data.source.local.sharedpref.SharedPrefsImplement;
 import com.framgia.soundcloud.utils.dagger.AppScope;
 import dagger.Module;
 import dagger.Provides;
@@ -27,5 +28,11 @@ public class AppModule {
     @AppScope
     public ContentResolverTrack provideContentResolverTrack() {
         return new ContentResolverTrack(mContext);
+    }
+
+    @Provides
+    @AppScope
+    public SharedPrefsImplement provideSharedPrefsImplement() {
+        return new SharedPrefsImplement(mContext);
     }
 }

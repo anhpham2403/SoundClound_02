@@ -3,6 +3,7 @@ package com.framgia.soundcloud.screen.detail;
 import android.app.Activity;
 import android.content.Context;
 import com.framgia.soundcloud.data.model.Track;
+import com.framgia.soundcloud.data.source.local.sharedpref.SharedPrefsImplement;
 import dagger.Module;
 import dagger.Provides;
 import java.util.List;
@@ -29,8 +30,8 @@ public class DetailModule {
     }
 
     @Provides
-    public DetailContract.Presenter providePresenter() {
-        return new DetailPresenter();
+    public DetailContract.Presenter providePresenter(SharedPrefsImplement implement) {
+        return new DetailPresenter(implement);
     }
 
     @Provides

@@ -26,6 +26,8 @@ public class Constant {
     public static final int SEEKBAR_DELAY_TIME = 1000;
     public static final String SIZE_IMAGE = "t500x500";
     public static final String LARGE = "large";
+    public static final String PREF_IS_SUFFLE = "issuffle";
+    public static final String PREF_LOOP_MODE = "loopmode";
     public static int[] IMAGE_CATEGORY = {
             R.drawable.ic_all, R.drawable.ic_audio, R.drawable.ic_ambient, R.drawable.ic_classical,
             R.drawable.ic_country, R.drawable.ic_pop, R.drawable.ic_hiphop_rap,
@@ -40,5 +42,26 @@ public class Constant {
         public static final String GENRES = "genres";
         public static final String LINKED_PARTITIONING = "linked_partitioning";
         public static final String OFFSET = "offset";
+    }
+
+    /**
+     * Action notification
+     */
+    public class IntentKey {
+        public static final int REQUEST_CODE_NOTIFICATION = 12;
+        public static final String ACTION_NEXT = "ACTION_NEXT";
+        public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
+        public static final String ACTION_PAUSE_OR_PLAY_SONG = "ACTION_PAUSE_OR_PLAY_SONG";
+        public static final String ACTION_STOP = "ACTION_STOP";
+        public static final String ACTION_START_FOREGROUND = "ACTION_START_FOREGROUND";
+        public static final String KEY_SEND_PAUSE_OR_PLAY = "KEY_SEND_PAUSE_OR_PLAY";
+        public static final int NOTIFICATION_ID = 1234;
+        public static final String ACTION_SEND_DATA = "ACTION_SEND_DATA";
+        public static final String ACTION_PAUSE_SONG_FROM_NOTIFICATION =
+                "ACTION_PAUSE_SONG_FROM_NOTIFICATION";
+        public static final String KEY_SEND_PAUSE = "KEY_SEND_PAUSE";
+
+        private IntentKey() {
+        }
     }
 }
