@@ -2,8 +2,12 @@ package com.framgia.soundcloud.utils.binding;
 
 import android.databinding.BindingAdapter;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import com.framgia.soundcloud.R;
@@ -78,5 +82,18 @@ public final class BindingUtils {
     public static void setScrollListenner(RecyclerView recyclerView,
             RecyclerView.OnScrollListener listener) {
         recyclerView.addOnScrollListener(listener);
+    }
+
+    @BindingAdapter({ "app:manager", "app:fragment", "app:service" })
+    public static void setFragmentManager(FrameLayout layout, FragmentManager manager,
+            Fragment fragment, boolean isServiceRunning) {
+        if (fragment == null) {
+            return;
+        }
+        if (!isServiceRunning) {
+            return;
+        }
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(layout.getId(), fragment).commit();
     }
 }

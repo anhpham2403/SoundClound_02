@@ -1,5 +1,6 @@
 package com.framgia.soundcloud.service;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -17,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 import com.framgia.soundcloud.R;
 import com.framgia.soundcloud.data.model.Track;
 import com.framgia.soundcloud.data.source.local.sharedpref.SharedPrefsImplement;
@@ -94,6 +96,7 @@ public class MusicService extends Service
         intentFilter.addAction(Constant.IntentKey.ACTION_START_FOREGROUND);
         intentFilter.addAction(Constant.IntentKey.ACTION_SEND_DATA);
         intentFilter.addAction(Constant.IntentKey.ACTION_STOP);
+        intentFilter.addAction(Constant.IntentKey.ACTION_POSTION);
         registerReceiver(mBroadCastMusic, intentFilter);
     }
 
@@ -122,10 +125,10 @@ public class MusicService extends Service
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if (mp.isLooping() && mMediaState == LoopMode.LOOP_TRACK) {
+        if (mp.isLooping()) {
             return;
         }
-        if (mp.isLooping()) {
+        if (mLoop == LoopMode.LOOP_LIST_TRACKS) {
             mp.reset();
             playNext();
         }
@@ -134,12 +137,29 @@ public class MusicService extends Service
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         mp.reset();
-        return false;
+        mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_play);
+        mRemoteViews.setTextViewText(R.id.tv_title, getCurrentTrack().getTitle());
+        mRemoteViews.setTextViewText(R.id.tv_actor, getCurrentTrack().getUser().getUserName());
+        startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
+        Intent intentPauseOrPlay =
+                new Intent(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
+        intentPauseOrPlay.putExtra(Constant.IntentKey.KEY_SEND_PAUSE, mPlayer.isPlaying());
+        sendBroadcast(intentPauseOrPlay);
+        Toast.makeText(this, Constant.CANT_PLAY_TRACK, Toast.LENGTH_LONG).show();
+        return true;
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+        mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_pause);
+        mRemoteViews.setTextViewText(R.id.tv_title, getCurrentTrack().getTitle());
+        mRemoteViews.setTextViewText(R.id.tv_actor, getCurrentTrack().getUser().getUserName());
+        startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
+        Intent intentPauseOrPlay =
+                new Intent(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
+        intentPauseOrPlay.putExtra(Constant.IntentKey.KEY_SEND_PAUSE, mPlayer.isPlaying());
+        sendBroadcast(intentPauseOrPlay);
     }
 
     @Override
@@ -165,6 +185,7 @@ public class MusicService extends Service
                 PendingIntent.getActivity(this, Constant.IntentKey.REQUEST_CODE_NOTIFICATION,
                         intentPress, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setPriority(Notification.PRIORITY_MAX);
         if (getCurrentTrack().getArtworkUrl() != null) {
             Picasso.with(this)
                     .load(getCurrentTrack().getArtworkUrl())
@@ -176,11 +197,6 @@ public class MusicService extends Service
                     .into(mRemoteViews, R.id.image_artwork, Constant.IntentKey.NOTIFICATION_ID,
                             mBuilder.build());
         }
-
-        mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_pause);
-        mRemoteViews.setTextViewText(R.id.tv_title, getCurrentTrack().getTitle());
-        mRemoteViews.setTextViewText(R.id.tv_actor, getCurrentTrack().getUser().getUserName());
-        startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
     }
 
     public void pauseTrack() {
@@ -218,6 +234,9 @@ public class MusicService extends Service
                 mPostion = mTracks.size() - 1;
             }
         }
+        Intent intentPosition = new Intent(Constant.IntentKey.ACTION_POSTION);
+        intentPosition.putExtra(Constant.IntentKey.ACTION_POSTION, mPostion);
+        sendBroadcast(intentPosition);
         playTrack();
     }
 
@@ -232,6 +251,9 @@ public class MusicService extends Service
         if (mIsSuffle) {
             mPostion = mRandom.nextInt(mTracks.size() - 1);
         }
+        Intent intentPosition = new Intent(Constant.IntentKey.ACTION_POSTION);
+        intentPosition.putExtra(Constant.IntentKey.ACTION_POSTION, mPostion);
+        sendBroadcast(intentPosition);
         playTrack();
     }
 
@@ -281,10 +303,10 @@ public class MusicService extends Service
     public void setLoop(@LoopMode int loop) {
         mLoop = loop;
         mPreferences.put(Constant.PREF_LOOP_MODE, loop);
-        if (mLoop == LoopMode.NONE_LOOP) {
-            mPlayer.setLooping(false);
-        } else {
+        if (mLoop == LoopMode.LOOP_TRACK) {
             mPlayer.setLooping(true);
+        } else {
+            mPlayer.setLooping(false);
         }
     }
 

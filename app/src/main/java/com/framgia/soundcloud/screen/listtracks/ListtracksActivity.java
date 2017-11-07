@@ -33,7 +33,7 @@ public class ListtracksActivity extends BaseActivity {
         setTitle(category.getName());
         DaggerListtracksComponent.builder()
                 .appComponent(((App) getApplication()).getComponent())
-                .listtracksModule(new ListtracksModule(this, category))
+                .listtracksModule(new ListtracksModule(this, category, getSupportFragmentManager()))
                 .build()
                 .inject(this);
         super.onCreate(savedInstanceState);
