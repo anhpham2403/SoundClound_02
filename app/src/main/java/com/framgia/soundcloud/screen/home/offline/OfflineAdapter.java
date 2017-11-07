@@ -44,7 +44,7 @@ public class OfflineAdapter extends RecyclerView.Adapter<OfflineAdapter.BindingH
         if (tracks == null) {
             return;
         }
-        mTracks.addAll(tracks);
+        //mTracks.addAll(tracks);
         notifyDataSetChanged();
     }
 

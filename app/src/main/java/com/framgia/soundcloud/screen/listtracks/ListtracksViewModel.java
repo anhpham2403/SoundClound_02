@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 import com.framgia.soundcloud.BR;
 import com.framgia.soundcloud.data.model.Track;
@@ -56,13 +57,13 @@ public class ListtracksViewModel extends BaseObservable
             FragmentManager manager) {
         mPresenter = presenter;
         mPresenter.setViewModel(this);
-        mPresenter.getTracks();
         mContext = context;
         mIsLoading = true;
         mTracks = new ArrayList<>();
         setAdapter(new ListtrackAdapter(mTracks, this));
         mManager = manager;
         mFragment = PlayerFragment.newInstance();
+        mPresenter.getTracks();
     }
 
     public boolean check() {

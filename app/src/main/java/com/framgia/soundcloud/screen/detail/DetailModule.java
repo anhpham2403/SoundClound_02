@@ -37,6 +37,6 @@ public class DetailModule {
     @Provides
     public TrackDownloadManager provideDownloadTrack(Context context) {
         return new TrackDownloadManager(context, mTracks.get(mPostion).getTitle(),
-                mTracks.get(mPostion).getDownloadUrl());
+                mTracks.get(mPostion).getDownloadWithClientId());
     }
 }

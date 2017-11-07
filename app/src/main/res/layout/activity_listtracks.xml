@@ -21,13 +21,6 @@
         android:layout_height="match_parent"
         tools:context="com.framgia.soundcloud.screen.home.category.CategoryActivity"
         >
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="@{LayoutManagers.grid(Constant.COLUMN_RECYCLER_VIEW)}"
-            app:recyclerAdapter="@{viewModel.adapter}"
-            app:scrollListenner="@{viewModel.scrollListener}"
-            />
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,6 +41,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:manager="@{viewModel.manager}"
             app:service="@{viewModel.serviceRunning}"
-           />
+            />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:decorationItem="@{Constant.COLUMN_RECYCLER_VIEW}"
+            app:layoutManager="@{LayoutManagers.grid(Constant.COLUMN_RECYCLER_VIEW)}"
+            app:layout_constraintBottom_toTopOf="@+id/play_control"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:marginItem="@{10}"
+            app:recyclerAdapter="@{viewModel.adapter}"
+            app:scrollListenner="@{viewModel.scrollListener}"
+            />
     </android.support.constraint.ConstraintLayout>
 </layout>

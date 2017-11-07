@@ -87,7 +87,7 @@ public class DetailViewModel extends BaseObservable
             mMusicService = binder.getMyService();
             mMusicService.setTracks(mTracks);
             mMusicService.setPostion(mPostion);
-            onPlayTrack();
+            onStartMedia();
             mPresenter.getStateMediaPlayer();
         }
 
@@ -195,6 +195,20 @@ public class DetailViewModel extends BaseObservable
             mMusicService.playTrack();
         }
         setPlay(true);
+    }
+
+    public void onStartMedia() {
+        if (mMusicService.getMediaState() == MusicService.StateMode.STATE_PAUSE
+                && DetailActivity.getsTracks().indexOf(mMusicService.getCurrentTrack())
+                == mPostion) {
+            mMusicService.updateStateMedia();
+        } else if (mMusicService.getMediaState() == MusicService.StateMode.STATE_PLAYING
+                && DetailActivity.getsTracks().indexOf(mMusicService.getCurrentTrack())
+                == mPostion) {
+            mMusicService.updateStateMedia();
+        } else {
+            mMusicService.playTrack();
+        }
     }
 
     @Override

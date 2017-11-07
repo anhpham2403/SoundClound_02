@@ -49,6 +49,7 @@ final class ListtracksPresenter implements ListtracksContract.Presenter {
         params.put(Constant.Param.GENRES, mCategory.getParam());
         params.put(Constant.Param.CLIENT_ID, BuildConfig.API_KEY);
         params.put(Constant.Param.LINKED_PARTITIONING, Constant.NUMBER_LINKED_PARTITIONING);
+        params.put(Constant.Param.LIMIT, Constant.PAGE_SIZE);
         params.put(Constant.Param.OFFSET, Constant.PAGE_SIZE);
         mDisposable.add(mRepository.getTracks(params)
                 .observeOn(AndroidSchedulers.mainThread())

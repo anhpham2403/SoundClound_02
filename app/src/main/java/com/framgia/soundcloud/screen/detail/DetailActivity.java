@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 import com.framgia.soundcloud.App;
 import com.framgia.soundcloud.R;
 import com.framgia.soundcloud.data.model.Track;
@@ -24,12 +25,14 @@ import javax.inject.Inject;
  * Detail Screen.
  */
 public class DetailActivity extends BaseActivity {
+    public static final String CAN_NOT_DOWNLOAD = "cant download this track";
     public static final int REQUEST_CODE = 100;
     private static List<Track> sTracks;
     @Inject
     DetailContract.ViewModel mViewModel;
     @Inject
     TrackDownloadManager mTrackDownloadManager;
+    private int mPosition;
 
     public static Intent getIntentDetailActivity(Context context, int postion) {
         Intent intent = new Intent(context, DetailActivity.class);
@@ -48,15 +51,15 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        int postion = getIntent().getIntExtra(Constant.POSTION_BUNDLE, Constant.DEFAULT_VALUE_INT);
+        mPosition = getIntent().getIntExtra(Constant.POSTION_BUNDLE, Constant.DEFAULT_VALUE_INT);
         DaggerDetailComponent.builder()
                 .appComponent(((App) getApplication()).getComponent())
-                .detailModule(new DetailModule(this, sTracks, postion))
+                .detailModule(new DetailModule(this, sTracks, mPosition))
                 .build()
                 .inject(this);
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle(sTracks.get(postion).getTitle());
+        setTitle(sTracks.get(mPosition).getTitle());
         ActivityDetailBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_detail);
         binding.setViewModel((DetailViewModel) mViewModel);
@@ -88,6 +91,9 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (!DetailActivity.getsTracks().get(mPosition).isDownloadable()) {
+            return false;
+        }
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_detail, menu);
         return super.onCreateOptionsMenu(menu);
@@ -97,6 +103,10 @@ public class DetailActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.download:
+                if (!DetailActivity.getsTracks().get(mPosition).isDownloadable()) {
+                    Toast.makeText(this, CAN_NOT_DOWNLOAD, Toast.LENGTH_LONG).show();
+                    return true;
+                }
                 if (isGrantPermission()) {
                     mTrackDownloadManager.startDownload();
                 } else {

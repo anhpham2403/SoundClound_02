@@ -1,15 +1,19 @@
 package com.framgia.soundcloud.utils.binding;
 
+import android.content.Context;
 import android.databinding.BindingAdapter;
+import android.graphics.Rect;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import com.framgia.soundcloud.R;
 import com.framgia.soundcloud.screen.home.ViewPagerAdapter;
 import com.framgia.soundcloud.utils.LayoutManagers;
@@ -95,5 +99,34 @@ public final class BindingUtils {
         }
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(layout.getId(), fragment).commit();
+    }
+
+    @BindingAdapter({ "bind:decorationItem", "bind:marginItem" })
+    public static void setDecorationRecyclerView(final RecyclerView recyclerView, final int column,
+            final int margin) {
+        final Context context = recyclerView.getContext();
+        final int dp = (int) (margin * context.getResources().getDisplayMetrics().density);
+        RecyclerView.ItemDecoration itemDecoration = new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                    RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                int position = parent.getChildLayoutPosition(view);
+                outRect.right = dp;
+                outRect.bottom = dp;
+                if (position < column) {
+                    outRect.top = dp;
+                }
+                if (position % column == 0) {
+                    outRect.left = dp;
+                }
+            }
+        };
+        recyclerView.addItemDecoration(itemDecoration);
+    }
+
+    @BindingAdapter({ "bind:setSelected" })
+    public static void setSelectedTextView(TextView view, boolean b) {
+        view.setSelected(b);
     }
 }

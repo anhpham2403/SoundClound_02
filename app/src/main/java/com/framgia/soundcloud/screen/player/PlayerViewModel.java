@@ -29,8 +29,6 @@ public class PlayerViewModel extends BaseObservable implements PlayerContract.Vi
     private boolean mIsPlay;
     private int mIconPlay;
     private Track mTrack;
-
-
     private BroadcastReceiver mUpdateState = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,8 +113,6 @@ public class PlayerViewModel extends BaseObservable implements PlayerContract.Vi
 
     public void updateState(Intent intent) {
         setPlay(intent.getBooleanExtra(Constant.IntentKey.KEY_SEND_PAUSE, false));
-        setTrack(DetailActivity.getsTracks()
-                .get(intent.getIntExtra(Constant.IntentKey.ACTION_POSTION, 0)));
         if (mIsPlay) {
             setIconPlay(R.drawable.ic_pause);
         } else {
@@ -195,5 +191,10 @@ public class PlayerViewModel extends BaseObservable implements PlayerContract.Vi
             onPlayTrack();
             setIconPlay(R.drawable.ic_pause);
         }
+    }
+
+    public void onClickFragment() {
+        mContext.startActivity(DetailActivity.getIntentDetailActivity(mContext,
+                DetailActivity.getsTracks().indexOf(mTrack)));
     }
 }

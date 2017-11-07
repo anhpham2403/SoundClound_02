@@ -13,8 +13,6 @@ import com.framgia.soundcloud.R;
  */
 
 public class TrackDownloadManager {
-    public static final String CAN_NOT_DOWNLOAD = "cant download this track";
-
     private final String mAudioType = ".mp3";
     private long downloadReference;
     private Context mContext;
@@ -74,11 +72,10 @@ public class TrackDownloadManager {
                 reasonText = "ERROR_DEVICE_NOT_FOUND";
                 break;
             default:
-                if (mUrl == null) {
-                    reasonText = CAN_NOT_DOWNLOAD;
-                }
                 break;
         }
-        Toast.makeText(mContext, reasonText, Toast.LENGTH_LONG).show();
+        if (reasonText.equals("")) {
+            Toast.makeText(mContext, reasonText, Toast.LENGTH_LONG).show();
+        }
     }
 }

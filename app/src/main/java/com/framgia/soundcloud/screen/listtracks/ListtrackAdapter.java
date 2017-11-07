@@ -2,6 +2,7 @@ package com.framgia.soundcloud.screen.listtracks;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import com.framgia.soundcloud.R;
@@ -44,7 +45,7 @@ public class ListtrackAdapter extends RecyclerView.Adapter<ListtrackAdapter.Bind
         if (tracks == null) {
             return;
         }
-        mTracks.addAll(tracks);
+        //mTracks.addAll(tracks);
         notifyDataSetChanged();
     }
 

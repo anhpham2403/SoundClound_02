@@ -37,8 +37,8 @@ final class OfflinePresenter implements OfflineContract.Presenter {
     @Override
     public void getTracks() {
         mRepository.getTracks()
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
                 .subscribeWith(new DisposableObserver<List<Track>>() {
                     @Override
                     public void onNext(List<Track> value) {

@@ -55,16 +55,15 @@ public class MusicService extends Service
     private BroadCastMusic mBroadCastMusic = new BroadCastMusic();
     private NotificationCompat.Builder mBuilder;
     private SharedPrefsImplement mPreferences;
+    private Track mCurrenTrack;
     private Runnable mUpdateTime = new Runnable() {
         public void run() {
-            if (mPlayer.isPlaying()) {
                 Intent broadcastIntent = new Intent(Constant.BROADCAST_UPDATE_CONTROL);
                 broadcastIntent.setAction(Constant.ACTION_UPDATE_SEEK_BAR);
                 broadcastIntent.putExtra(Constant.BROADCAST_CURRENT_POSTION,
                         mPlayer.getCurrentPosition());
                 broadcastIntent.putExtra(Constant.BUFFERING_LEVEL, mBufferingLevel);
                 getApplicationContext().sendBroadcast(broadcastIntent);
-            }
             mSeekBarHandler.postDelayed(this, Constant.SEEKBAR_DELAY_TIME);
         }
     };
@@ -72,7 +71,13 @@ public class MusicService extends Service
     public void updateSeekBar() {
         mSeekBarHandler.postDelayed(mUpdateTime, Constant.SEEKBAR_DELAY_TIME);
     }
-
+    public void updateStateMedia() {
+        mSeekBarHandler.postDelayed(mUpdateTime, 0);
+        Intent intentPauseOrPlay =
+                new Intent(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
+        intentPauseOrPlay.putExtra(Constant.IntentKey.KEY_SEND_PAUSE, mPlayer.isPlaying());
+        sendBroadcast(intentPauseOrPlay);
+    }
     @Override
     public void onCreate() {
         super.onCreate();
@@ -169,12 +174,16 @@ public class MusicService extends Service
     }
 
     public void playTrack() {
+        if (mTracks.indexOf(mCurrenTrack) == mPostion) {
+            return;
+        }
         mPlayer.reset();
         try {
             mPlayer.setDataSource(mTracks.get(mPostion).getUri());
         } catch (IOException e) {
             Log.getStackTraceString(e);
         }
+        mCurrenTrack = mTracks.get(mPostion);
         mPlayer.prepareAsync();
         updateSeekBar();
         mMediaState = StateMode.STATE_PLAYING;
@@ -209,6 +218,10 @@ public class MusicService extends Service
         mMediaState = StateMode.STATE_PAUSE;
         mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_play);
         startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
+        Intent intentPauseOrPlay =
+                new Intent(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
+        intentPauseOrPlay.putExtra(Constant.IntentKey.KEY_SEND_PAUSE, mPlayer.isPlaying());
+        sendBroadcast(intentPauseOrPlay);
     }
 
     public void resumeTrack() {
@@ -221,6 +234,10 @@ public class MusicService extends Service
         mMediaState = StateMode.STATE_PLAYING;
         mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_pause);
         startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
+        Intent intentPauseOrPlay =
+                new Intent(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
+        intentPauseOrPlay.putExtra(Constant.IntentKey.KEY_SEND_PAUSE, mPlayer.isPlaying());
+        sendBroadcast(intentPauseOrPlay);
     }
 
     public void playPrev() {
@@ -284,7 +301,7 @@ public class MusicService extends Service
     }
 
     public Track getCurrentTrack() {
-        return mTracks.get(mPostion);
+        return mCurrenTrack;
     }
 
     @StateMode
@@ -346,9 +363,9 @@ public class MusicService extends Service
     @Retention(SOURCE)
     @IntDef({ LoopMode.NONE_LOOP, LoopMode.LOOP_LIST_TRACKS, LoopMode.LOOP_TRACK })
     public @interface LoopMode {
-    int NONE_LOOP = 0;
-    int LOOP_LIST_TRACKS = 1;
-    int LOOP_TRACK = 2;
+        int NONE_LOOP = 0;
+        int LOOP_LIST_TRACKS = 1;
+        int LOOP_TRACK = 2;
     }
 
     /**
@@ -360,10 +377,10 @@ public class MusicService extends Service
             StateMode.STATE_STOP
     })
     public @interface StateMode {
-    int STATE_IDLE = 0;
-    int STATE_PLAYING = 1;
-    int STATE_PAUSE = 2;
-    int STATE_STOP = 3;
+        int STATE_IDLE = 0;
+        int STATE_PLAYING = 1;
+        int STATE_PAUSE = 2;
+        int STATE_STOP = 3;
     }
 
     /**
@@ -407,4 +424,5 @@ public class MusicService extends Service
             return MusicService.this;
         }
     }
+
 }

@@ -19,5 +19,7 @@
         android:layout_height="wrap_content"
         app:layoutManager="@{LayoutManagers.linear()}"
         app:recyclerAdapter="@{viewModel.adapter}"
+        app:marginItem="@{10}"
+        app:decorationItem="@{1}"
         />
 </layout>

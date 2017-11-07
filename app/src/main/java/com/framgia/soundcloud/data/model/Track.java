@@ -71,6 +71,10 @@ public class Track extends BaseObservable implements Parcelable {
         mDownloadUrl = downloadUrl;
     }
 
+    public String getDownloadWithClientId() {
+        return mDownloadUrl + Constant.CLIENT_ID;
+    }
+
     @Bindable
     public String getArtworkUrl() {
         return mArtworkUrl;
