@@ -11,6 +11,10 @@ interface DetailContract {
      * View.
      */
     interface ViewModel extends BaseViewModel {
+        void setStateLoop(int loop);
+
+        void setStateShuffle(boolean isShuffle);
+
         void onDestroy();
 
         void onPlayTrack();
@@ -26,8 +30,6 @@ interface DetailContract {
         void onLoopTrackClick();
 
         void setSeekBar(int progressPercentage);
-
-        void setSecondProgressSeekBar(int bufferingLevel);
     }
 
     /**
@@ -35,5 +37,7 @@ interface DetailContract {
      */
     interface Presenter extends BasePresenter<ViewModel> {
         void updateSeekBar(int duration, int fullDuration);
+
+        void getStateMediaPlayer();
     }
 }

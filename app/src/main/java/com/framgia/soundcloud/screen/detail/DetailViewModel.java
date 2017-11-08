@@ -55,6 +55,18 @@ public class DetailViewModel extends BaseObservable
             }
         }
     };
+    private BroadcastReceiver mUpdateState = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION:
+                    updateState(intent);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     private ServiceConnection mMusicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -63,6 +75,7 @@ public class DetailViewModel extends BaseObservable
             mMusicService.setTracks(mTracks);
             mMusicService.setPostion(mPostion);
             onPlayTrack();
+            mPresenter.getStateMediaPlayer();
         }
 
         @Override
@@ -89,6 +102,9 @@ public class DetailViewModel extends BaseObservable
         IntentFilter filterUpdate = new IntentFilter(Constant.BROADCAST_UPDATE_CONTROL);
         filterUpdate.addAction(Constant.ACTION_UPDATE_SEEK_BAR);
         mContext.registerReceiver(mUpdateInfo, filterUpdate);
+        IntentFilter filterState =
+                new IntentFilter(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
+        mContext.registerReceiver(mUpdateState, filterState);
     }
 
     @Override
@@ -120,6 +136,32 @@ public class DetailViewModel extends BaseObservable
     public String getTime() {
         SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
         return format.format(new Date(mTrack.getDuration()));
+    }
+
+    @Override
+    public void setStateLoop(int loop) {
+        switch (loop) {
+            case MusicService.LoopMode.NONE_LOOP:
+                setLoop(MusicService.LoopMode.NONE_LOOP);
+                setIconLoop(R.drawable.ic_repeat_off);
+                break;
+            case MusicService.LoopMode.LOOP_LIST_TRACKS:
+                setLoop(MusicService.LoopMode.LOOP_LIST_TRACKS);
+                setIconLoop(R.drawable.ic_repeat_on);
+                break;
+            case MusicService.LoopMode.LOOP_TRACK:
+                setLoop(MusicService.LoopMode.LOOP_TRACK);
+                setIconLoop(R.drawable.ic_repeat_one);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void setStateShuffle(boolean isShuffle) {
+        setSuffle(isShuffle);
+        setIconShuffle(isShuffle ? R.drawable.ic_shuffle_on : R.drawable.ic_shuffle_off);
     }
 
     @Override
@@ -194,17 +236,17 @@ public class DetailViewModel extends BaseObservable
         setProgressPercentage(progressPercentage);
     }
 
-    @Override
-    public void setSecondProgressSeekBar(int bufferingLevel) {
-        setSecondProgressPercentage(bufferingLevel);
-    }
-
     public void loadSeekBar(Intent intent) {
         int time = intent.getIntExtra(Constant.BROADCAST_CURRENT_POSTION, 0);
         int bufferingLevel = intent.getIntExtra(Constant.BUFFERING_LEVEL, 0);
         setCurrentPosition(time);
         mPresenter.updateSeekBar(time, mTrack.getDuration());
         setSecondProgressPercentage(bufferingLevel);
+    }
+
+    public void updateState(Intent intent) {
+        setPlay(intent.getBooleanExtra(Constant.IntentKey.KEY_SEND_PAUSE, false));
+        setIconPlay(isPlay() ? R.drawable.ic_pause : R.drawable.ic_play);
     }
 
     public void onClickPlay() {

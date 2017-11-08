@@ -1,7 +1,11 @@
 package com.framgia.soundcloud.service;
 
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -10,9 +14,15 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
+import com.framgia.soundcloud.R;
 import com.framgia.soundcloud.data.model.Track;
+import com.framgia.soundcloud.data.source.local.sharedpref.SharedPrefsImplement;
+import com.framgia.soundcloud.screen.detail.DetailActivity;
 import com.framgia.soundcloud.utils.Constant;
+import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.util.ArrayList;
@@ -39,6 +49,10 @@ public class MusicService extends Service
     private IBinder mIBinder = new MusicService.MyBinder();
     private Handler mSeekBarHandler = new Handler();
     private int mBufferingLevel;
+    private RemoteViews mRemoteViews;
+    private BroadCastMusic mBroadCastMusic = new BroadCastMusic();
+    private NotificationCompat.Builder mBuilder;
+    private SharedPrefsImplement mPreferences;
     private Runnable mUpdateTime = new Runnable() {
         public void run() {
             if (mPlayer.isPlaying()) {
@@ -60,14 +74,27 @@ public class MusicService extends Service
     @Override
     public void onCreate() {
         super.onCreate();
+        mPreferences = new SharedPrefsImplement(getApplicationContext());
         mPlayer = new MediaPlayer();
         mTracks = new ArrayList<>();
         mPostion = 0;
         mRandom = new Random();
-        mIsSuffle = false;
-        mLoop = LoopMode.NONE_LOOP;
+        mIsSuffle = mPreferences.get(Constant.PREF_IS_SUFFLE, Boolean.class);
+        mLoop = mPreferences.get(Constant.PREF_LOOP_MODE, Integer.class);
         mBufferingLevel = 0;
         initMusicPlayer();
+        registerReceiver();
+    }
+
+    public void registerReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constant.IntentKey.ACTION_PREVIOUS);
+        intentFilter.addAction(Constant.IntentKey.ACTION_NEXT);
+        intentFilter.addAction(Constant.IntentKey.ACTION_PAUSE_OR_PLAY_SONG);
+        intentFilter.addAction(Constant.IntentKey.ACTION_START_FOREGROUND);
+        intentFilter.addAction(Constant.IntentKey.ACTION_SEND_DATA);
+        intentFilter.addAction(Constant.IntentKey.ACTION_STOP);
+        registerReceiver(mBroadCastMusic, intentFilter);
     }
 
     public void initMusicPlayer() {
@@ -82,6 +109,7 @@ public class MusicService extends Service
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        runForeground();
         return mIBinder;
     }
 
@@ -116,6 +144,8 @@ public class MusicService extends Service
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(mBroadCastMusic);
+        super.onDestroy();
     }
 
     public void playTrack() {
@@ -128,6 +158,29 @@ public class MusicService extends Service
         mPlayer.prepareAsync();
         updateSeekBar();
         mMediaState = StateMode.STATE_PLAYING;
+        Intent intentPress =
+                DetailActivity.getIntentDetailActivity(getApplicationContext(), mPostion);
+        intentPress.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, Constant.IntentKey.REQUEST_CODE_NOTIFICATION,
+                        intentPress, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pendingIntent);
+        if (getCurrentTrack().getArtworkUrl() != null) {
+            Picasso.with(this)
+                    .load(getCurrentTrack().getArtworkUrl())
+                    .into(mRemoteViews, R.id.image_artwork, Constant.IntentKey.NOTIFICATION_ID,
+                            mBuilder.build());
+        } else {
+            Picasso.with(this)
+                    .load(R.drawable.ic_default)
+                    .into(mRemoteViews, R.id.image_artwork, Constant.IntentKey.NOTIFICATION_ID,
+                            mBuilder.build());
+        }
+
+        mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_pause);
+        mRemoteViews.setTextViewText(R.id.tv_title, getCurrentTrack().getTitle());
+        mRemoteViews.setTextViewText(R.id.tv_actor, getCurrentTrack().getUser().getUserName());
+        startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
     }
 
     public void pauseTrack() {
@@ -138,6 +191,8 @@ public class MusicService extends Service
         mResumePosition = mPlayer.getCurrentPosition();
         mSeekBarHandler.removeCallbacks(mUpdateTime);
         mMediaState = StateMode.STATE_PAUSE;
+        mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_play);
+        startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
     }
 
     public void resumeTrack() {
@@ -148,6 +203,8 @@ public class MusicService extends Service
         mPlayer.start();
         updateSeekBar();
         mMediaState = StateMode.STATE_PLAYING;
+        mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_pause);
+        startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
     }
 
     public void playPrev() {
@@ -179,6 +236,7 @@ public class MusicService extends Service
     }
 
     public void setSuffle(boolean isSuffle) {
+        mPreferences.put(Constant.PREF_IS_SUFFLE, isSuffle);
         mIsSuffle = isSuffle;
     }
 
@@ -222,6 +280,7 @@ public class MusicService extends Service
 
     public void setLoop(@LoopMode int loop) {
         mLoop = loop;
+        mPreferences.put(Constant.PREF_LOOP_MODE, loop);
         if (mLoop == LoopMode.NONE_LOOP) {
             mPlayer.setLooping(false);
         } else {
@@ -232,6 +291,31 @@ public class MusicService extends Service
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         mBufferingLevel = percent;
+    }
+
+    private void runForeground() {
+        mRemoteViews =
+                new RemoteViews(getPackageName(), R.layout.layout_notification_music_service);
+        mRemoteViews.setImageViewResource(R.id.btn_next, R.drawable.ic_next);
+        mRemoteViews.setImageViewResource(R.id.btn_play, R.drawable.ic_play);
+        mRemoteViews.setImageViewResource(R.id.btn_prev, R.drawable.ic_previous);
+        mBuilder =
+                new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_stat_notification)
+                        .setCustomBigContentView(mRemoteViews);
+        PendingIntent pre = PendingIntent.getBroadcast(getApplicationContext(),
+                Constant.IntentKey.REQUEST_CODE_NOTIFICATION,
+                new Intent(Constant.IntentKey.ACTION_PREVIOUS), 0);
+        mRemoteViews.setOnClickPendingIntent(R.id.btn_prev, pre);
+        PendingIntent next = PendingIntent.getBroadcast(getApplicationContext(),
+                Constant.IntentKey.REQUEST_CODE_NOTIFICATION,
+                new Intent(Constant.IntentKey.ACTION_NEXT), 0);
+        mRemoteViews.setOnClickPendingIntent(R.id.btn_next, next);
+        Intent intentP = new Intent(Constant.IntentKey.ACTION_PAUSE_OR_PLAY_SONG);
+        intentP.putExtra(Constant.IntentKey.KEY_SEND_PAUSE_OR_PLAY, mPlayer.isPlaying());
+        PendingIntent pause = PendingIntent.getBroadcast(getApplicationContext(),
+                Constant.IntentKey.REQUEST_CODE_NOTIFICATION, intentP, 0);
+        mRemoteViews.setOnClickPendingIntent(R.id.btn_play, pause);
+        startForeground(Constant.IntentKey.NOTIFICATION_ID, mBuilder.build());
     }
 
     /**
@@ -258,6 +342,39 @@ public class MusicService extends Service
     int STATE_PLAYING = 1;
     int STATE_PAUSE = 2;
     int STATE_STOP = 3;
+    }
+
+    /**
+     * BroadCast class
+     */
+    class BroadCastMusic extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Constant.IntentKey.ACTION_PREVIOUS:
+                    playPrev();
+                    break;
+                case Constant.IntentKey.ACTION_NEXT:
+                    playNext();
+                    break;
+                case Constant.IntentKey.ACTION_PAUSE_OR_PLAY_SONG:
+                    if (mPlayer == null) {
+                        return;
+                    }
+                    if (mPlayer.isPlaying()) {
+                        pauseTrack();
+                    } else {
+                        resumeTrack();
+                    }
+                    Intent intentPauseOrPlay =
+                            new Intent(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
+                    intentPauseOrPlay.putExtra(Constant.IntentKey.KEY_SEND_PAUSE,
+                            mPlayer.isPlaying());
+                    sendBroadcast(intentPauseOrPlay);
+                    break;
+            }
+        }
     }
 
     /**
