@@ -38,5 +38,16 @@
             app:layout_constraintTop_toTopOf="parent"
             style="?android:attr/progressBarStyle"
             />
+        <FrameLayout
+            android:id="@+id/play_control"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:fragment="@{viewModel.fragment}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:manager="@{viewModel.manager}"
+            app:service="@{viewModel.serviceRunning}"
+           />
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -1,8 +1,11 @@
 package com.framgia.soundcloud.screen.listtracks;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
@@ -10,6 +13,7 @@ import com.framgia.soundcloud.BR;
 import com.framgia.soundcloud.data.model.Track;
 import com.framgia.soundcloud.data.model.TrackResponse;
 import com.framgia.soundcloud.screen.detail.DetailActivity;
+import com.framgia.soundcloud.screen.player.PlayerFragment;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +23,16 @@ import java.util.List;
 
 public class ListtracksViewModel extends BaseObservable
         implements ListtracksContract.ViewModel, ListtrackAdapter.OnItemClickListener {
+    private static final String SERVICE = "com.framgia.soundcloud.service.MusicService";
     private List<Track> mTracks;
     private ListtracksContract.Presenter mPresenter;
     private ListtrackAdapter mAdapter;
     private Context mContext;
     private boolean mIsLoading;
     private String mUrl;
+    private Fragment mFragment;
+    private FragmentManager mManager;
+    private boolean mIsServiceRunning;
     private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -44,7 +52,8 @@ public class ListtracksViewModel extends BaseObservable
         }
     };
 
-    public ListtracksViewModel(Context context, ListtracksContract.Presenter presenter) {
+    public ListtracksViewModel(Context context, ListtracksContract.Presenter presenter,
+            FragmentManager manager) {
         mPresenter = presenter;
         mPresenter.setViewModel(this);
         mPresenter.getTracks();
@@ -52,11 +61,26 @@ public class ListtracksViewModel extends BaseObservable
         mIsLoading = true;
         mTracks = new ArrayList<>();
         setAdapter(new ListtrackAdapter(mTracks, this));
+        mManager = manager;
+        mFragment = PlayerFragment.newInstance();
+    }
+
+    public boolean check() {
+        ActivityManager manager =
+                (ActivityManager) mContext.getSystemService(mContext.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
+                Integer.MAX_VALUE)) {
+            if (SERVICE.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void onStart() {
         mPresenter.onStart();
+        setServiceRunning(check());
     }
 
     @Override
@@ -112,5 +136,25 @@ public class ListtracksViewModel extends BaseObservable
     @Bindable
     public RecyclerView.OnScrollListener getScrollListener() {
         return mScrollListener;
+    }
+
+    @Bindable
+    public Fragment getFragment() {
+        return mFragment;
+    }
+
+    @Bindable
+    public FragmentManager getManager() {
+        return mManager;
+    }
+
+    @Bindable
+    public boolean isServiceRunning() {
+        return mIsServiceRunning;
+    }
+
+    public void setServiceRunning(boolean serviceRunning) {
+        mIsServiceRunning = serviceRunning;
+        notifyPropertyChanged(BR.serviceRunning);
     }
 }

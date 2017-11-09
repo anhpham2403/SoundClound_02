@@ -27,6 +27,7 @@ public class Constant {
     public static final String SIZE_IMAGE = "t500x500";
     public static final String LARGE = "large";
     public static final String PREF_IS_SUFFLE = "issuffle";
+    public static final String CANT_PLAY_TRACK = "cant play track";
     public static final String PREF_LOOP_MODE = "loopmode";
     public static int[] IMAGE_CATEGORY = {
             R.drawable.ic_all, R.drawable.ic_audio, R.drawable.ic_ambient, R.drawable.ic_classical,
@@ -60,6 +61,7 @@ public class Constant {
         public static final String ACTION_PAUSE_SONG_FROM_NOTIFICATION =
                 "ACTION_PAUSE_SONG_FROM_NOTIFICATION";
         public static final String KEY_SEND_PAUSE = "KEY_SEND_PAUSE";
+        public static final String ACTION_POSTION = "ACTION_POSTION";
 
         private IntentKey() {
         }

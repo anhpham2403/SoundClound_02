@@ -3,6 +3,7 @@ package com.framgia.soundcloud.screen.listtracks;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import com.framgia.soundcloud.data.model.Category;
 import com.framgia.soundcloud.data.source.TrackRepository;
 import com.framgia.soundcloud.data.source.local.TrackLocalDataSource;
@@ -17,16 +18,18 @@ import dagger.Provides;
 public class ListtracksModule {
     private Activity mActivity;
     private Category mCategory;
+    private FragmentManager mManager;
 
-    public ListtracksModule(@NonNull Activity activity, Category category) {
+    public ListtracksModule(@NonNull Activity activity, Category category, FragmentManager manager) {
         mActivity = activity;
         mCategory = category;
+        mManager = manager;
     }
 
     @Provides
     public ListtracksContract.ViewModel provideViewModel(Context context,
             ListtracksContract.Presenter presenter) {
-        return new ListtracksViewModel(context, presenter);
+        return new ListtracksViewModel(context, presenter, mManager);
     }
 
     @Provides

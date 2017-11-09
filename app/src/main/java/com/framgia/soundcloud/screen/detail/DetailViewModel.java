@@ -43,6 +43,7 @@ public class DetailViewModel extends BaseObservable
     private int mIconPlay;
     private int mIconShuffle;
     private int mIconLoop;
+    private String mTime;
     private BroadcastReceiver mUpdateInfo = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -61,6 +62,18 @@ public class DetailViewModel extends BaseObservable
             switch (intent.getAction()) {
                 case Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION:
                     updateState(intent);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    private BroadcastReceiver mUpdateSong = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Constant.IntentKey.ACTION_POSTION:
+                    setUpdateSong(intent);
                     break;
                 default:
                     break;
@@ -105,6 +118,8 @@ public class DetailViewModel extends BaseObservable
         IntentFilter filterState =
                 new IntentFilter(Constant.IntentKey.ACTION_PAUSE_SONG_FROM_NOTIFICATION);
         mContext.registerReceiver(mUpdateState, filterState);
+        IntentFilter filterSong = new IntentFilter(Constant.IntentKey.ACTION_POSTION);
+        mContext.registerReceiver(mUpdateSong, filterSong);
     }
 
     @Override
@@ -130,6 +145,7 @@ public class DetailViewModel extends BaseObservable
     public void setTrack(Track track) {
         mTrack = track;
         notifyPropertyChanged(BR.track);
+        notifyPropertyChanged(BR.time);
     }
 
     @Bindable
@@ -168,6 +184,7 @@ public class DetailViewModel extends BaseObservable
     public void onDestroy() {
         mContext.stopService(mPlayIntent);
         mMusicService = null;
+        mContext.unregisterReceiver(mUpdateState);
     }
 
     @Override
@@ -189,13 +206,11 @@ public class DetailViewModel extends BaseObservable
     @Override
     public void onNextTrack() {
         mMusicService.playNext();
-        setTrack(mMusicService.getCurrentTrack());
     }
 
     @Override
     public void onPrevTrack() {
         mMusicService.playPrev();
-        setTrack(mMusicService.getCurrentTrack());
     }
 
     @Override
@@ -247,6 +262,11 @@ public class DetailViewModel extends BaseObservable
     public void updateState(Intent intent) {
         setPlay(intent.getBooleanExtra(Constant.IntentKey.KEY_SEND_PAUSE, false));
         setIconPlay(isPlay() ? R.drawable.ic_pause : R.drawable.ic_play);
+    }
+
+    public void setUpdateSong(Intent intent) {
+        setTrack(DetailActivity.getsTracks()
+                .get(intent.getIntExtra(Constant.IntentKey.ACTION_POSTION, 0)));
     }
 
     public void onClickPlay() {
